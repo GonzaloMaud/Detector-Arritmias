@@ -29,8 +29,8 @@ with st.spinner('Cargando cerebro digital...'):
     try:
         model = load_model()
         st.success("✅ Sistema Inteligente Activo")
-    except Exception as e:
-        st.error(f"❌ Error crítico: No se encuentra el archivo 'modelo_ecg_final.keras'. Asegúrate de subirlo a GitHub junto con este script.")
+   except Exception as e:
+        st.error(f"❌ Error cargando el modelo: {e}")
         st.stop() # Detiene la app si no hay modelo
 
 # --- 3. INTERFAZ DE SUBIDA ---
