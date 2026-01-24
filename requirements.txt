@@ -1,6 +1,7 @@
 streamlit
 pandas
 numpy
-tensorflow
 shap
 matplotlib
+tensorflow==2.15.0
+protobuf==4.25.3
