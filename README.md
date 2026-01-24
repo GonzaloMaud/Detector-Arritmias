@@ -1,15 +1,12 @@
 ---
 title: Detector Arritmias
-emoji: 🚀
+emoji: 🫀
 colorFrom: red
-colorTo: red
-sdk: docker
+colorTo: pink
+sdk: streamlit
+sdk_version: 1.31.0
 app_file: app.py
-app_port: 8501
-tags:
-- streamlit
 pinned: false
-short_description: Streamlit template space
 license: mit
 ---
 
