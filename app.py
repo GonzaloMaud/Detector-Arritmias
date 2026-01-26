@@ -10,16 +10,14 @@ st.set_page_config(page_title="Asistente de Arritmias", page_icon="🫀", layout
 
 st.title("🫀 Detector de Arritmias con IA")
 st.markdown("""
-Esta herramienta utiliza una **Red Neuronal Convolucional (CNN)** entrenada con el dataset **MIT-BIH** para clasificar latidos cardíacos en 5 categorías clínicas.
+Esta herramienta utiliza una **Red Neuronal Convolucional (CNN)** entrenada con el dataset **MIT-BIH** para clasificar latidos cardíacos.
 """)
 
-# Expander con información técnica
-with st.expander("ℹ️ ¿Cómo funciona? (Información Técnica)"):
+with st.expander("ℹ️ Detalles Técnicos"):
     st.markdown("""
-    * **Entrada:** Señal ECG de un solo latido (Ventana de ~1.5s re-muestreada a 125Hz).
-    * **Preprocesamiento:** Si el archivo no tiene exactamente 187 puntos, el sistema aplica *Zero-Padding* o recorte automáticamente.
-    * **Modelo:** CNN construida con TensorFlow/Keras.
-    * **Explicabilidad:** Uso de SHAP para visualizar la importancia de cada punto del latido.
+    * **Modelo:** CNN (Keras/TensorFlow).
+    * **Entrada:** Señal ECG (187 puntos).
+    * **Explicabilidad:** Algoritmo SHAP (DeepExplainer).
     """)
 st.markdown("---")
 
@@ -30,133 +28,122 @@ def load_model():
     return model
 
 try:
-    with st.spinner('Inicializando motor de inferencia...'):
+    with st.spinner('Cargando sistema...'):
         model = load_model()
-        st.success("✅ Sistema Inteligente Activo")
+        st.success("✅ Modelo Activo")
 except Exception as e:
     st.error(f"❌ Error crítico cargando el modelo: {e}")
     st.stop()
 
 # --- 3. GESTIÓN DE ARCHIVOS ---
 st.subheader("📂 Análisis de Señal")
-uploaded_file = st.file_uploader("Sube tu archivo CSV (Formato vector fila)", type="csv")
+uploaded_file = st.file_uploader("Sube tu archivo CSV", type="csv")
 
 if uploaded_file is not None:
     try:
-        # Lectura segura del CSV
         df = pd.read_csv(uploaded_file, header=None)
-        
-        # Conversión a numérico forzando errores a NaN
         data_raw = pd.to_numeric(df.iloc[0, :], errors='coerce').values
-        
-        # Limpieza de nulos
         data_raw = data_raw[~np.isnan(data_raw)]
         
-        # --- LÓGICA DE AUTO-REPARACIÓN ---
-        TARGET_LENGTH = 187
-        current_length = len(data_raw)
+        # --- AUTO-REPARACIÓN ---
+        TARGET = 187
+        curr = len(data_raw)
         
-        if current_length == 0:
-            st.error("El archivo parece estar vacío o no contiene números válidos.")
+        if curr == 0:
+            st.error("Archivo vacío.")
             st.stop()
             
-        if current_length < TARGET_LENGTH:
-            st.warning(f"⚠️ **Aviso:** El latido tiene {current_length} puntos. Se ha rellenado con ceros hasta llegar a {TARGET_LENGTH}.")
-            padding = np.zeros(TARGET_LENGTH - current_length)
+        if curr < TARGET:
+            st.warning(f"⚠️ Rellenando señal (de {curr} a {TARGET} puntos).")
+            padding = np.zeros(TARGET - curr)
             data = np.concatenate((data_raw, padding))
-        elif current_length > TARGET_LENGTH:
-            st.info(f"ℹ️ **Aviso:** La señal excedía el tamaño estándar. Se ha recortado a {TARGET_LENGTH} puntos.")
-            data = data_raw[:TARGET_LENGTH]
+        elif curr > TARGET:
+            st.info(f"ℹ️ Recortando señal (de {curr} a {TARGET} puntos).")
+            data = data_raw[:TARGET]
         else:
             data = data_raw
-            st.success("✅ Longitud de señal correcta (187 puntos).")
+            st.success("✅ Señal correcta.")
             
-        # Asegurar tipo float32
         data = data.astype(np.float32)
-        
-        # Visualización Previa
         st.line_chart(data)
         
         # --- 4. INFERENCIA ---
-        if st.button("🔍 Ejecutar Diagnóstico"):
+        if st.button("🔍 Diagnosticar"):
             
-            # Reshape para entrar a la CNN: (1, 187, 1)
-            data_reshaped = data.reshape(1, 187, 1)
+            # Reshape (1, 187, 1)
+            data_in = data.reshape(1, 187, 1)
             
-            with st.spinner('Analizando patrones morfológicos...'):
-                prediction = model.predict(data_reshaped)
+            with st.spinner('Analizando...'):
+                prediction = model.predict(data_in)
                 clase_predicha = np.argmax(prediction)
                 probabilidad = np.max(prediction) * 100
                 
-                # Mapeo de clases
                 clases = {
-                    0: 'Normal (N) - Ritmo Sinusal', 
-                    1: 'Arritmia Supraventricular (S)', 
-                    2: 'Arritmia Ventricular (V)', 
+                    0: 'Normal (N)', 
+                    1: 'Supraventricular (S)', 
+                    2: 'Ventricular (V)', 
                     3: 'Fusión (F)', 
-                    4: 'Latido Desconocido (Q)'
+                    4: 'Desconocido (Q)'
                 }
-                resultado = clases.get(clase_predicha, "Clase Desconocida")
+                resultado = clases.get(clase_predicha, "Error")
             
             # --- RESULTADOS ---
             st.markdown("---")
-            st.subheader("🩺 Informe de IA")
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
+            c1, c2 = st.columns(2)
+            with c1:
                 if clase_predicha == 0:
                     st.success(f"## {resultado}")
-                    st.caption("Morfología compatible con funcionamiento fisiológico estándar.")
                 else:
                     st.error(f"## {resultado}")
-                    st.caption("⚠️ Se han detectado anomalías morfológicas en el complejo QRS.")
+            with c2:
+                st.metric("Confianza", f"{probabilidad:.2f}%")
             
-            with col2:
-                st.metric("Confianza del Modelo", f"{probabilidad:.2f}%")
-            
-            # --- 5. EXPLICABILIDAD (SHAP - CORREGIDO) ---
-            st.subheader("🧠 Interpretación del Modelo (SHAP)")
-            st.write("El mapa de calor muestra en **rojo** las áreas que activaron la detección.")
+            # --- 5. EXPLICABILIDAD (SHAP BLINDADO) ---
+            st.subheader("🧠 Mapa de Calor (SHAP)")
             
             try:
+                # 1. Calculamos SHAP
                 background = np.zeros((1, 187, 1))
                 explainer = shap.DeepExplainer(model, background)
-                shap_values = explainer.shap_values(data_reshaped)
+                shap_values = explainer.shap_values(data_in)
                 
-                # --- CORRECCIÓN INTELIGENTE DEL ERROR DE ÍNDICE ---
-                # Detectamos si SHAP devuelve una lista (versiones antiguas) o un array único (versiones nuevas)
+                # 2. Normalización de formatos (Lista vs Array)
                 if isinstance(shap_values, list):
-                    if len(shap_values) > 1:
-                        # Caso A: Una lista con 5 arrays (uno por clase). Usamos la clase predicha.
-                        shap_val = shap_values[clase_predicha][0]
-                    else:
-                        # Caso B: Una lista con 1 solo array que contiene todo. Usamos el índice 0.
-                        shap_val = shap_values[0][0]
-                        # Si tiene 3 dimensiones (ej: 187, 1, 5), cogemos la capa de la clase predicha
-                        if shap_val.ndim == 3 and shap_val.shape[-1] == 5:
-                             shap_val = shap_val[:, :, clase_predicha]
+                    # Si devuelve lista de 5 arrays, cogemos el de la clase predicha
+                    shap_val = shap_values[clase_predicha]
                 else:
-                    # Caso C: No es lista, es un array directo.
-                    shap_val = shap_values[0]
-                
-                # Aplanamos para asegurar que encaje en el gráfico (187 puntos planos)
-                shap_val = shap_val.flatten()
-                data_plot = data.flatten()
+                    # Si devuelve un array único
+                    shap_val = shap_values
 
-                # Gráfica
-                fig, ax = plt.subplots(figsize=(10, 3))
-                ax.plot(data_plot, color='gray', alpha=0.3, label='Señal ECG')
-                sc = ax.scatter(range(len(data_plot)), data_plot, c=shap_val, cmap='coolwarm_r', s=15, alpha=0.9)
+                # 3. CORRECCIÓN MATEMÁTICA (El error 935)
+                # Convertimos a array numpy plano primero
+                shap_val = np.array(shap_val)
                 
+                # Si el tamaño es gigante (187 * 5 = 935), significa que están todas las clases pegadas
+                if shap_val.size == 935:
+                    # Lo reordenamos a (187 filas, 5 columnas)
+                    shap_val = shap_val.reshape(187, 5)
+                    # Y nos quedamos solo con la columna de la clase ganadora
+                    shap_val = shap_val[:, clase_predicha]
+                
+                # Aplanamos a 187 para asegurar
+                shap_val = shap_val.flatten()
+                
+                # Si por algún motivo sigue sin ser 187, cortamos o rellenamos (seguridad extrema)
+                if shap_val.shape[0] > 187:
+                    shap_val = shap_val[:187]
+                
+                # 4. Gráfico
+                fig, ax = plt.subplots(figsize=(10, 3))
+                ax.plot(data, color='gray', alpha=0.3)
+                sc = ax.scatter(range(187), data, c=shap_val, cmap='coolwarm_r', s=15)
                 plt.colorbar(sc, label='Importancia')
-                ax.set_title(f"Impacto visual en: {resultado}")
+                ax.set_title(f"Impacto visual para: {resultado}")
                 st.pyplot(fig)
                 
             except Exception as e:
-                # Si falla SHAP, no rompemos la app, solo avisamos
-                st.warning(f"No se pudo generar el gráfico de interpretabilidad, pero el diagnóstico es correcto.")
-                st.caption(f"Detalle técnico del error: {e}")
+                st.warning(f"Diagnóstico correcto, pero no se pudo generar el gráfico SHAP.")
+                st.caption(f"Error técnico: {e}")
 
     except Exception as e:
-        st.error(f"Error procesando el archivo: {e}")
+        st.error(f"Error procesando archivo: {e}")
