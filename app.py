@@ -17,7 +17,7 @@ Es capaz de detectar arritmias incluso si el latido no está perfectamente centr
 # --- 2. CARGA DEL MODELO ---
 @st.cache_resource
 def load_model():
-    # Asegúrate de que el nombre coincida con tu archivo subido
+    # Asegúrate de que este nombre es el correcto
     return tf.keras.models.load_model('modelo_todoterreno.keras')
 
 try:
@@ -92,6 +92,7 @@ if uploaded_file is not None:
                 explainer = shap.DeepExplainer(model, np.zeros((1, 187, 1)))
                 shap_values = explainer.shap_values(data_reshaped)
                 
+                # Gestión de formatos SHAP
                 if isinstance(shap_values, list):
                     shap_val = shap_values[clase_val]
                 else:
@@ -99,13 +100,22 @@ if uploaded_file is not None:
                 
                 shap_val = np.array(shap_val)
                 
+                # Corrección dimensiones
                 if shap_val.size == (187 * 5): 
                     shap_val = shap_val.reshape(187, 5)[:, clase_val]
                 
                 shap_val = shap_val.flatten()[:187]
 
+                # Gráfico
                 fig, ax = plt.subplots(figsize=(10, 3))
                 ax.plot(data, color='gray', alpha=0.3)
                 sc = ax.scatter(range(187), data, c=shap_val, cmap='coolwarm_r', s=15)
                 plt.colorbar(sc, label='Importancia')
                 ax.set_title(f"Zonas críticas para: {resultado}")
+                st.pyplot(fig)
+            
+            except Exception as e:
+                st.warning("Diagnóstico completado, pero no se pudo generar el gráfico SHAP.")
+
+    except Exception as e:
+        st.error(f"Error procesando el archivo: {e}")
