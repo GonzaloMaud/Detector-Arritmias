@@ -17,7 +17,7 @@ Es capaz de detectar arritmias incluso si el latido no está perfectamente centr
 # --- 2. CARGA DEL MODELO ---
 @st.cache_resource
 def load_model():
-    # ¡OJO! Asegúrate de que este nombre coincide con el archivo que subas
+    # Asegúrate de que el nombre coincida con tu archivo subido
     return tf.keras.models.load_model('modelo_todoterreno.keras')
 
 try:
@@ -35,12 +35,12 @@ if uploaded_file is not None:
     try:
         # Lectura básica
         df = pd.read_csv(uploaded_file, header=None)
+        
+        # Convertimos a números y limpiamos errores
         data_raw = pd.to_numeric(df.iloc[0, :], errors='coerce').values
         data_raw = data_raw[~np.isnan(data_raw)]
         
-        # --- PRE-PROCESAMIENTO MÍNIMO (Solo longitud) ---
-        # Como el modelo es inteligente (Opción B), NO centramos el pico.
-        # Solo nos aseguramos de que tenga el tamaño correcto (187) para no romper la matriz.
+        # --- PRE-PROCESAMIENTO MÍNIMO ---
         TARGET_LEN = 187
         if len(data_raw) < TARGET_LEN:
             padding = np.zeros(TARGET_LEN - len(data_raw))
@@ -52,5 +52,60 @@ if uploaded_file is not None:
             
         data = data.astype(np.float32)
         
-        # Mostramos la señal tal cual viene (para demostrar que el modelo no necesita trampas)
+        # Mostramos la señal
         st.write("### Señal de Entrada")
+        st.line_chart(data)
+        
+        # --- 4. DIAGNÓSTICO ---
+        if st.button("🔍 Analizar Latido"):
+            
+            data_reshaped = data.reshape(1, 187, 1)
+            
+            with st.spinner('Procesando...'):
+                prediction = model.predict(data_reshaped)
+                clase_val = np.argmax(prediction)
+                confianza = np.max(prediction) * 100
+                
+                clases = {
+                    0: 'Normal (N)', 
+                    1: 'Supraventricular (S)', 
+                    2: 'Ventricular (V)', 
+                    3: 'Fusión (F)', 
+                    4: 'Desconocido (Q)'
+                }
+                resultado = clases.get(clase_val, "Error")
+            
+            # Resultados
+            st.markdown("---")
+            c1, c2 = st.columns(2)
+            c1.metric("Diagnóstico", resultado)
+            c2.metric("Confianza", f"{confianza:.1f}%")
+            
+            if clase_val != 0:
+                st.error(f"⚠️ Detección: {resultado}")
+            else:
+                st.success(f"✅ {resultado}")
+
+            # --- 5. EXPLICABILIDAD (SHAP) ---
+            try:
+                st.subheader("Por qué la IA dice esto (SHAP)")
+                explainer = shap.DeepExplainer(model, np.zeros((1, 187, 1)))
+                shap_values = explainer.shap_values(data_reshaped)
+                
+                if isinstance(shap_values, list):
+                    shap_val = shap_values[clase_val]
+                else:
+                    shap_val = shap_values
+                
+                shap_val = np.array(shap_val)
+                
+                if shap_val.size == (187 * 5): 
+                    shap_val = shap_val.reshape(187, 5)[:, clase_val]
+                
+                shap_val = shap_val.flatten()[:187]
+
+                fig, ax = plt.subplots(figsize=(10, 3))
+                ax.plot(data, color='gray', alpha=0.3)
+                sc = ax.scatter(range(187), data, c=shap_val, cmap='coolwarm_r', s=15)
+                plt.colorbar(sc, label='Importancia')
+                ax.set_title(f"Zonas críticas para: {resultado}")
