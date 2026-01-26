@@ -47,7 +47,7 @@ def preprocess_ecg(data_raw):
 # --- 3. CARGA DEL MODELO ---
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model('modelo_ecg_final.keras')
+    return tf.keras.models.load_model('modelo_todoterreno.keras')
 
 try:
     model = load_model()
