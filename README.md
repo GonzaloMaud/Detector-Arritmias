@@ -50,7 +50,7 @@ El sistema incluye **explicabilidad mediante SHAP** (SHapley Additive exPlanatio
 
 [![Open in Hugging Face](https://img.shields.io/badge/🤗-Abrir%20App-yellow?style=for-the-badge)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmias)
 
-![Flujo del Sistema](system_flow.png)
+![Flujo del Sistema](images/system_flow.png)
 
 *La aplicación completa está desplegada y ejecutándose en **Hugging Face Spaces**, donde todo el pipeline (carga de CSV, inferencia del modelo y explicación SHAP) se ejecuta en tiempo real.*
 
@@ -128,7 +128,7 @@ El electrocardiograma (ECG) es el registro gráfico de la actividad eléctrica d
 
 <div align="center">
 
-![Complejo QRS](qrs_complex_diagram.png)
+![Complejo QRS](images/qrs_complex_diagram.png)
 
 *Anatomía del electrocardiograma mostrando las ondas P, complejo QRS y onda T*
 
@@ -244,7 +244,7 @@ Este proyecto clasifica latidos en 5 categorías basadas en la clasificación m�
 
 <div align="center">
 
-![Comparación de Latidos ECG](ecg_beats_comparison.png)
+![Comparación de Latidos ECG](images/ecg_beats_comparison.png)
 
 *Comparación de las características electrocardiográficas de los 5 tipos de latidos detectados por el sistema*
 
@@ -574,7 +574,7 @@ Es **normal y esperado** que un porcentaje de latidos caiga en esta categoría p
 
 <div align="center">
 
-![Arquitectura del Modelo](model_architecture.png)
+![Arquitectura del Modelo](images/model_architecture.png)
 
 *Arquitectura de la red neuronal convolucional utilizada para la clasificación de arritmias*
 
@@ -810,11 +810,11 @@ Todos los latidos utilizados son **muestras reales** del conjunto de test del MI
 
 <div align="center">
 
-![Señal Normal](imagenes/normal_signal.png)
+![Señal Normal](images/normal_signal.png)
 
 *Señal ECG de entrada correspondiente a un latido normal*
 
-![SHAP Normal](imagenes/normal_shap.png)
+![SHAP Normal](images/normal_shap.png)
 
 *Mapa SHAP mostrando las zonas críticas para la clasificación como "Normal"*
 
@@ -841,11 +841,11 @@ La confianza del 100% refleja que esta señal cumple perfectamente todos los cri
 
 <div align="center">
 
-![Señal Supraventricular](imagenes/supra_signal.png)
+![Señal Supraventricular](images/supra_signal.png)
 
 *Señal ECG de un latido supraventricular*
 
-![SHAP Supraventricular](imagenes/supra_shap.png)
+![SHAP Supraventricular](images/supra_shap.png)
 
 *SHAP resaltando irregularidades en la activación auricular*
 
@@ -872,11 +872,11 @@ Este es un resultado coherente con la literatura médica: los latidos supraventr
 
 <div align="center">
 
-![Señal Ventricular](imagenes/ventricular_signal.png)
+![Señal Ventricular](images/ventricular_signal.png)
 
 *Señal ECG con complejo QRS característicamente ancho y deformado*
 
-![SHAP Ventricular](imagenes/ventricular_shap.png)
+![SHAP Ventricular](images/ventricular_shap.png)
 
 *SHAP destacando el QRS ancho como evidencia principal*
 
@@ -903,11 +903,11 @@ La confianza del 100% indica que el modelo ha aprendido perfectamente estos crit
 
 <div align="center">
 
-![Señal Fusión](imagenes/fusion_signal.png)
+![Señal Fusión](images/fusion_signal.png)
 
 *Señal mostrando características híbridas entre latido normal y ventricular*
 
-![SHAP Fusión](imagenes/fusion_shap.png)
+![SHAP Fusión](images/fusion_shap.png)
 
 *SHAP mostrando contribuciones distribuidas por el complejo QRS*
 
@@ -934,11 +934,11 @@ La alta confianza sugiere que el patrón híbrido es claro en este ejemplo espec
 
 <div align="center">
 
-![Señal Desconocido](imagenes/paced_signal.png)
+![Señal Desconocido](images/paced_signal.png)
 
 *Señal con morfología atípica no clasificable en categorías estándar*
 
-![SHAP Desconocido](imagenes/paced_shap.png)
+![SHAP Desconocido](images/paced_shap.png)
 
 *SHAP mostrando anomalías dispersas en la señal*
 
