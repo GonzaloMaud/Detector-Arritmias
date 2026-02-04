@@ -1257,40 +1257,6 @@ Este proyecto está basado en conocimiento médico y técnico establecido en la 
 
 ---
 
-## 🤝 Contribución
-
-¡Las contribuciones son bienvenidas! Si deseas colaborar con este proyecto:
-
-### Cómo Contribuir
-
-1. **Fork** el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add: Amazing Feature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un **Pull Request**
-
-### Áreas de Contribución
-
-Contribuciones valiosas incluyen:
-
-- 🐛 **Reportar bugs** con ejemplos reproducibles
-- 💡 **Proponer nuevas características** (más tipos de arritmias, soporte multi-derivación)
-- 📝 **Mejorar documentación** (traducciones, ejemplos adicionales)
-- 🧪 **Agregar tests** unitarios y de integración
-- 🎨 **Mejorar UI/UX** de la aplicación Streamlit
-- 📊 **Optimizar modelo** (nuevas arquitecturas, técnicas de entrenamiento)
-- 🔬 **Validación clínica** (colaboración con profesionales médicos)
-
-### Directrices
-
-- Mantén el código limpio y documentado
-- Sigue las convenciones de estilo de Python (PEP 8)
-- Añade docstrings a funciones nuevas
-- Actualiza el README si es necesario
-- Respeta las consideraciones médicas y éticas
-
----
-
 ## ⚠️ Descargo de Responsabilidad Médica
 
 **IMPORTANTE**: Este proyecto es estrictamente con fines **educativos, de investigación y demostración técnica**.
@@ -1354,25 +1320,9 @@ SOFTWARE.
 **GonzaloMaud**
 
 - 🌐 Hugging Face: [@GonzaloMaud](https://huggingface.co/GonzaloMaud)
-- 💼 LinkedIn: [Tu Perfil LinkedIn]
-- 📧 Email: tu.email@ejemplo.com
-- 🐱 GitHub: [@tu-usuario](https://github.com/tu-usuario)
-
----
-
-## 🙏 Agradecimientos
-
-Este proyecto no habría sido posible sin:
-
-- **MIT-BIH** y **PhysioNet** por proporcionar el dataset de arritmias
-- **Kaggle** por el preprocesamiento y la comunidad de data science
-- **TensorFlow/Keras** por el framework de deep learning
-- **SHAP** por la biblioteca de interpretabilidad
-- **Streamlit** por la plataforma de desarrollo de apps
-- **Hugging Face** por el hosting gratuito de la aplicación
-- **La comunidad open source** de ML médico por compartir conocimiento
-
-Agradecimiento especial a los **47 pacientes** cuyos registros ECG forman parte del MIT-BIH Arrhythmia Database y han contribuido al avance de la investigación en cardiología computacional.
+- 💼 LinkedIn: [Gonzalo Robert Maud Gallego]
+- 📧 Email: gonzalo.maud@ejemplo.com
+- 🐱 GitHub: [@GonzaloMaud](https://github.com/GonzaloMaud)
 
 ---
 
