@@ -212,72 +212,6 @@ F1-Score Macro Avg: 0.90  (≈ similar a v1)
 
 ---
 
-###  Análisis de Errores Críticos
-
-<div align="center">
-
-| Métrica de Seguridad | 🧬 Modelo v1 | 🛡️ Modelo v2 | Ganador |
-|---------------------|--------------|--------------|---------|
-| **Falsos Negativos (FN) en Ventricular** | 64 casos | **26 casos** | ✅ **v2** (60% menos FN) |
-| **Falsos Negativos (FN) en Supraventricular** | 58 casos | **36 casos** | ✅ **v2** (38% menos FN) |
-| **Recall Promedio Clases Minoritarias** | 0.88 | **0.93** | ✅ **v2** (+5.7%) |
-| **Accuracy Global** | **98%** | 94% | ✅ v1 (+4%) |
-| **Falsos Positivos (FP)** | 287 casos | **452 casos** | ✅ v1 (menos alarmas) |
-
-</div>
-
-**Interpretación Clínica:**
-
-| Escenario | Modelo v1 | Modelo v2 | Consecuencia Real |
-|-----------|-----------|-----------|-------------------|
-| **Paciente con arritmia ventricular real** | 5% probabilidad de NO detectarlo | 2% probabilidad de NO detectarlo | v2 salva más vidas |
-| **Paciente normal** | 1% probabilidad de falsa alarma | 3% probabilidad de falsa alarma | v2 genera más alarmas innecesarias |
-| **Costo de error** | Muerte del paciente | Holter 24h adicional (~150€) | **v2 es infinitamente más seguro** |
-
----
-
-###  Conclusión Clínica
-
-<div align="center">
-
-## 🛡️ El Modelo v2 (Robusto) es Superior para Aplicaciones Médicas Reales
-
-</div>
-
-####  Por qué el Modelo v2 gana:
-
-1. **Principio Médico Fundamental**: *"Primum non nocere"* (Primero, no hacer daño)
-   - Es **éticamente inaceptable** dejar escapar un infarto por optimizar accuracy
-   - Una falsa alarma es un inconveniente; un falso negativo es una muerte
-
-2. **Costo-Beneficio Favorable**:
-   - **Costo de FP (Falso Positivo)**: Holter 24h (150€), Ecocardiograma (200€), ansiedad del paciente
-   - **Costo de FN (Falso Negativo)**: Muerte súbita, demandas millonarias, pérdida de licencia médica
-
-3. **Estándares Regulatorios** (FDA, CE, AEMPS):
-   - Los dispositivos médicos deben priorizar **Sensibilidad (Recall) sobre Especificidad**
-   - Un modelo con 98% accuracy pero 95% recall NO pasaría certificación
-
-4. **Realidad Hospitalaria**:
-   - Los médicos **siempre revisan las alarmas** manualmente
-   - Es mejor tener 10 alarmas de más que 1 arritmia mortal sin detectar
-   - El modelo actúa como **sistema de screening**, no diagnóstico final
-
-#### 📊 Evidencia Numérica:
-
-- **Modelo v1**: De 1,286 arritmias ventriculares reales, **falla en 64** → 64 muertes potenciales
-- **Modelo v2**: De 1,286 arritmias ventriculares reales, **falla en 26** → 26 muertes potenciales
-- **Resultado**: El modelo v2 salva **38 vidas adicionales** por cada 1,286 pacientes con arritmia ventricular
-
-####  Trade-off Aceptable:
-
-- **Precio**: 165 falsas alarmas adicionales (452 vs 287)
-- **Beneficio**: 38 vidas salvadas
-- **Ratio**: **1 vida salvada por cada 4.3 falsas alarmas adicionales**
-- **Veredicto**: **Totalmente aceptable** desde cualquier perspectiva ética
-
----
-
 ###  Recomendación Final
 
 Para **aplicaciones clínicas reales**, utilizar el **Modelo v2 (Robusto)** porque:
@@ -296,7 +230,7 @@ Para **aplicaciones clínicas reales**, utilizar el **Modelo v2 (Robusto)** porq
 
 Los datasets utilizados en este proyecto **no corresponden a señales ECG crudas**, sino que han sido preprocesados previamente siguiendo el formato estándar del **MIT-BIH Arrhythmia Database**.
 
-### 🔧 Proceso de Preprocesamiento
+###  Proceso de Preprocesamiento
 
 El preprocesamiento aplicado a los datos originales consiste en:
 
