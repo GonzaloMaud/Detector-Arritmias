@@ -303,3 +303,229 @@ Dense (128) + ReLU + Dropout(0.5)
 Dense (5) + Softmax
          ↓
 Output: [P(N), P(S), P(V), P(F), P(Q)]
+
+---
+
+## 📊 Análisis Visual de Resultados
+
+<div align="center">
+
+![Flujo del Sistema](images/system_flow.png)
+
+*Pipeline completo: Carga → Preprocesamiento → CNN → Predicción → Explicación SHAP*
+
+</div>
+
+Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos con los mismos latidos del MIT-BIH Test Set.
+
+---
+
+### Latido Normal (N)
+
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Normal v1](images/normal_signal.png) | ![Señal Normal v2](images/normal_signal_v2.png) |
+| *Señal ECG - Normal* | *Señal ECG - Normal* |
+| ![SHAP Normal v1](images/normal_shap.png) | ![SHAP Normal v2](images/normal_shap_v2.png) |
+| *Mapa SHAP - Normal* | *Mapa SHAP - Normal* |
+| **Predicción: Normal (N)** | **Predicción: Normal (N)** |
+| Confianza: 100% | Confianza: 99% |
+
+</div>
+
+**Análisis**: Ambos modelos clasifican correctamente. El QRS estrecho y la onda P son las características clave detectadas por SHAP.
+
+---
+
+### Latido Supraventricular (S)
+
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Supra v1](images/supra_signal.png) | ![Señal Supra v2](images/supra_signal_v2.png) |
+| *Señal ECG - Supraventricular* | *Señal ECG - Supraventricular* |
+| ![SHAP Supra v1](images/supra_shap.png) | ![SHAP Supra v2](images/supra_shap_v2.png) |
+| *Mapa SHAP - Supraventricular* | *Mapa SHAP - Supraventricular* |
+| **Predicción: Normal (N)**  | **Predicción: Supraventricular (S)**  |
+| Confianza: 72% | Confianza: 89% |
+
+</div>
+
+**Análisis**: El v2 detecta correctamente la irregularidad pre-QRS. El v1 falla al clasificarlo como Normal (falso negativo crítico).
+
+---
+
+### Latido Ventricular (V)
+
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Ventricular v1](images/ventricular_signal.png) | ![Señal Ventricular v2](images/ventricular_signal_v2.png) |
+| *Señal ECG - Ventricular* | *Señal ECG - Ventricular* |
+| ![SHAP Ventricular v1](images/ventricular_shap.png) | ![SHAP Ventricular v2](images/ventricular_shap_v2.png) |
+| *Mapa SHAP - Ventricular* | *Mapa SHAP - Ventricular* |
+| **Predicción: Ventricular (V)** ✅ | **Predicción: Ventricular (V)** ✅ |
+| Confianza: 98% | Confianza: 96% |
+
+</div>
+
+**Análisis**: Ambos modelos identifican correctamente el QRS ancho como indicador de arritmia ventricular. SHAP concentra importancia en la región del QRS.
+
+---
+
+### Latido de Fusión (F)
+
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Fusión v1](images/fusion_signal.png) | ![Señal Fusión v2](images/fusion_signal_v2.png) |
+| *Señal ECG - Fusión* | *Señal ECG - Fusión* |
+| ![SHAP Fusión v1](images/fusion_shap.png) | ![SHAP Fusión v2](images/fusion_shap_v2.png) |
+| *Mapa SHAP - Fusión* | *Mapa SHAP - Fusión* |
+| **Predicción: Fusión (F)** ✅ | **Predicción: Fusión (F)** ✅ |
+| Confianza: 91% | Confianza: 88% |
+
+</div>
+
+**Análisis**: SHAP muestra importancia distribuida en varias regiones del QRS, reflejando la naturaleza híbrida del latido de fusión.
+
+---
+
+### Latido Desconocido (Q)
+
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Desconocido v1](images/paced_signal.png) | ![Señal Desconocido v2](images/paced_signal_v2.png) |
+| *Señal ECG - Desconocido* | *Señal ECG - Desconocido* |
+| ![SHAP Desconocido v1](images/paced_shap.png) | ![SHAP Desconocido v2](images/paced_shap_v2.png) |
+| *Mapa SHAP - Desconocido* | *Mapa SHAP - Desconocido* |
+| **Predicción: Desconocido (Q)** ✅ | **Predicción: Desconocido (Q)** ✅ |
+| Confianza: 99.9% | Confianza: 98.5% |
+
+</div>
+
+**Análisis**: Ambos modelos identifican correctamente morfologías atípicas. SHAP destaca regiones anómalas dispersas en la señal.
+
+---
+
+### Resumen Comparativo
+
+| Tipo de Latido | Modelo v1 | Modelo v2 | Ganador |
+|----------------|-----------|-----------|---------|
+| **Normal** | ✅ 100% | ✅ 99% | Empate |
+| **Supraventricular** | ❌ 72% (clasificó como N) | ✅ 89% | **v2** |
+| **Ventricular** | ✅ 98% | ✅ 96% | Empate |
+| **Fusión** | ✅ 91% | ✅ 88% | Empate |
+| **Desconocido** | ✅ 99.9% | ✅ 98.5% | Empate |
+
+**Conclusión visual**: El Modelo v2 demuestra mayor sensibilidad en clases minoritarias (S), mientras ambos son igualmente efectivos en clases bien definidas (N, V).
+
+---
+
+---
+
+##  Instalación y Uso
+
+### Probar Online (Recomendado)
+
+**Modelo v1 (Clásico):**  
+https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmias
+
+**Modelo v2 (Robusto):**  
+https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmiasv2
+
+### Instalación Local
+```bash
+# Clonar el repositorio
+git clone https://github.com/GonzaloMaud/detector-arritmias.git
+cd detector-arritmias
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Ejecutar aplicación (elige la versión)
+streamlit run app_v1.py  # Modelo Clásico
+streamlit run app_v2.py  # Modelo Robusto
+```
+
+---
+
+## 📊 Dataset
+
+### MIT-BIH Arrhythmia Database
+
+| Aspecto | Detalles |
+|---------|----------|
+| **Fuente** | PhysioNet / MIT-BIH |
+| **Pacientes** | 47 individuos |
+| **Duración** | ~30 minutos por registro |
+| **Frecuencia de muestreo** | 360 Hz |
+| **Anotaciones** | Revisadas por dos cardiólogos expertos |
+
+**Distribución de Clases (Desbalanceo Real):**
+
+| Clase | Cantidad | Porcentaje |
+|-------|----------|------------|
+| Normal (N) | 75,052 | 85.7% |
+| Ventricular (V) | 6,431 | 7.3% |
+| Supraventricular (S) | 2,223 | 2.5% |
+| Desconocido (Q) | 3,046 | 3.5% |
+| Fusión (F) | 802 | 0.9% |
+
+---
+
+##  Referencias Científicas
+
+1. **Goldberger, A. L., et al.** (2000). *PhysioBank, PhysioToolkit, and PhysioNet.* Circulation, 101(23), e215-e220.
+
+2. **Rajpurkar, P., et al.** (2017). *Cardiologist-level arrhythmia detection with convolutional neural networks.* arXiv:1707.01836.
+
+3. **Hannun, A. Y., et al.** (2019). *Cardiologist-level arrhythmia detection in ambulatory electrocardiograms.* Nature Medicine, 25(1), 65-69.
+
+4. **Lundberg, S. M., & Lee, S. I.** (2017). *A unified approach to interpreting model predictions.* NIPS 30.
+
+5. **Branco, P., Torgo, L., & Ribeiro, R. P.** (2016). *A survey of predictive modeling on imbalanced domains.* ACM Computing Surveys, 49(2), 1-50.
+
+---
+
+##  Descargo de Responsabilidad Médica
+
+**IMPORTANTE**: Este proyecto es con fines **educativos y de investigación**.
+
+❌ **NO está destinado para uso clínico real**  
+❌ **NO debe usarse para diagnóstico médico**  
+❌ **NO reemplaza el criterio de profesionales de la salud**
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la **Licencia MIT**. Ver [LICENSE](LICENSE) para más detalles.
+
+---
+
+##  Autor
+
+**Gonzalo Robert Maud Gallego**
+
+- 🌐 Hugging Face: [@GonzaloMaud](https://huggingface.co/GonzaloMaud)
+- 💼 LinkedIn: Gonzalo Robert Maud Gallego
+- 🐱 GitHub: [@GonzaloMaud](https://github.com/GonzaloMaud)
+
+---
+
+<div align="center">
+
+---
+
+*"En medicina, es mejor tener 10 falsas alarmas que 1 muerte por no detectar una arritmia"*
+
+[![Modelo v1](https://img.shields.io/badge/🤗-Demo%20v1%20Clásico-blue?style=for-the-badge)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmias)
+[![Modelo v2](https://img.shields.io/badge/🤗-Demo%20v2%20Robusto-green?style=for-the-badge)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmiasv2)
