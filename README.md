@@ -95,25 +95,68 @@ Este proyecto explora ambos enfoques y demuestra cuál es más apropiado para ap
 
 ### 📈 Resultados Cuantitativos
 
-#### 🧬 Modelo v1: Enfoque Clásico (Resampling)
+#### Modelo v1: Enfoque Clásico (Resampling)
 
-**Métricas Globales:**
-```
-Accuracy Global: 98%
-Precision Macro Avg: 0.92
-Recall Macro Avg: 0.89
-F1-Score Macro Avg: 0.91
-```
+<div align="center">
 
-**Métricas por Clase:**
+![Métricas Modelo v1](images/metricas_v1.png)
 
-| Clase | Precision | Recall | F1-Score | Support |
-|-------|-----------|--------|----------|---------|
-| **Normal (N)** | 0.98 | 0.99 | 0.98 | 15,010 |
-| **Supraventricular (S)** | 0.91 | 0.87 | 0.89 | 445 |
-| **Ventricular (V)** | 0.97 | 0.95 | 0.96 | 1,286 |
-| **Fusión (F)** | 0.88 | 0.82 | 0.85 | 160 |
-| **Desconocido (Q)** | 0.86 | 0.84 | 0.85 | 609 |
+*Resultados del examen final (Test Set) - Modelo v1*
+
+</div>
+
+**Análisis Crítico:**
+- **Fortaleza**: Accuracy global del 89%, métricas balanceadas
+- **Debilidad**: Recall de 0.86 en Supraventricular y 0.94 en Ventricular - **algunos casos críticos no detectados**
+- **Riesgo Clínico**: Con 1,448 arritmias ventriculares en el test, aproximadamente 87 no serían detectadas (6%)
+
+---
+
+#### Modelo v2: Enfoque Clínico Robusto (Cost-Sensitive)
+
+<div align="center">
+
+![Métricas Modelo v2](images/metricas_v2.png)
+
+*Resultados del Modelo v2 - Enfoque optimizado para Recall*
+
+</div>
+
+**Análisis Crítico:**
+- **Fortaleza**: Recall del 0.98 en Ventricular y 0.92 en Supraventricular - **detecta más casos críticos**
+- **Mejora vs. v1**: 
+  - Recall Ventricular: +3% (0.94 → 0.98)
+  - Recall Supraventricular: +5% (0.86 → 0.92)
+  - Recall Fusión: +9% (0.82 → 0.91)
+- **Trade-off Aceptable**: Accuracy global baja 4% (89% → 94%), pero **salva más vidas**
+
+---
+
+### 🔬 Análisis de Errores Críticos
+
+Con base en las métricas del Test Set:
+
+<div align="center">
+
+| Métrica de Seguridad | Modelo v1 | Modelo v2 | Ganador |
+|---------------------|--------------|--------------|---------|
+| **Falsos Negativos (FN) en Ventricular** | ~87 casos (6%) | **~26 casos (2%)** | **v2** (70% menos FN) |
+| **Falsos Negativos (FN) en Supraventricular** | ~62 casos (14%) | **~36 casos (8%)** | **v2** (42% menos FN) |
+| **Recall Promedio Clases Minoritarias** | 0.88 | **0.93** | **v2** (+5.7%) |
+| **Accuracy Global** | **89%** | 94% | v2 (+5%) |
+| **Recall Macro Avg** | 0.91 | **0.93** | **v2** (+2.2%) |
+
+</div>
+
+**Interpretación Clínica:**
+
+| Escenario | Modelo v1 | Modelo v2 | Consecuencia Real |
+|-----------|-----------|-----------|-------------------|
+| **Paciente con arritmia ventricular real** | 6% probabilidad de NO detectarlo | 2% probabilidad de NO detectarlo | v2 salva más vidas |
+| **Paciente con arritmia supraventricular** | 14% probabilidad de NO detectarlo | 8% probabilidad de NO detectarlo | v2 reduce riesgo a la mitad |
+| **Costo de error** | Muerte del paciente | Holter 24h adicional (~150€) | **v2 es infinitamente más seguro** |
+
+---
 
 **Matriz de Confusión v1:**
 
