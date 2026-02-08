@@ -99,7 +99,7 @@ Este proyecto explora ambos enfoques y demuestra cuál es más apropiado para ap
 
 <div align="center">
 
-![Métricas Modelo v1](images/metricas_v1.png)
+![Métricas Modelo v1](images/metricas_modelo_v1.png)
 
 *Resultados del examen final (Test Set) - Modelo v1*
 
@@ -116,7 +116,7 @@ Este proyecto explora ambos enfoques y demuestra cuál es más apropiado para ap
 
 <div align="center">
 
-![Métricas Modelo v2](images/metricas_v2.png)
+![Métricas Modelo v2](images/metricas_modelo_v2.png)
 
 *Resultados del Modelo v2 - Enfoque optimizado para Recall*
 
