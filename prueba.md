@@ -304,7 +304,6 @@ Dense (5) + Softmax
          ↓
 Output: [P(N), P(S), P(V), P(F), P(Q)]
 
----
 
 ## 📊 Análisis Visual de Resultados
 
