@@ -49,11 +49,11 @@ Prueba ambas versiones del sistema y compara su comportamiento clínico:
 
 ---
 
-## 🎯 Descripción General
+##  Descripción General
 
 Este proyecto implementa **dos enfoques diferentes** para la detección automática de arritmias cardíacas mediante redes neuronales convolucionales (CNN), entrenadas con el **MIT-BIH Arrhythmia Database**.
 
-### 🔬 El Dilema Fundamental
+### El Dilema Fundamental
 
 En machine learning médico existe un **trade-off crítico** entre dos objetivos:
 
@@ -66,23 +66,23 @@ En machine learning médico existe un **trade-off crítico** entre dos objetivos
 
 Este proyecto explora ambos enfoques y demuestra cuál es más apropiado para aplicaciones clínicas reales.
 
-### ✨ Características Principales
+### Características Principales
 
-- ✅ **Dos modelos implementados**: Enfoque clásico vs. enfoque clínico
-- ✅ **Comparativa rigurosa**: Métricas detalladas por clase y análisis de errores críticos
-- ✅ **Interpretabilidad**: Visualización SHAP de las regiones críticas de la señal
-- ✅ **Interfaz Web**: Ambos modelos desplegados en Hugging Face Spaces
-- ✅ **Fundamento médico**: Justificación clínica de la elección del mejor modelo
+-  **Dos modelos implementados**: Enfoque clásico vs. enfoque clínico
+-  **Comparativa rigurosa**: Métricas detalladas por clase y análisis de errores críticos
+-  **Interpretabilidad**: Visualización SHAP de las regiones críticas de la señal
+-  **Interfaz Web**: Ambos modelos desplegados en Hugging Face Spaces
+-  **Fundamento médico**: Justificación clínica de la elección del mejor modelo
 
 ---
 
-## ⚔️ Comparativa de Modelos: Accuracy vs. Seguridad Clínica
+##  Comparativa de Modelos: Accuracy vs. Seguridad Clínica
 
-### 📊 Filosofías de Diseño
+###  Filosofías de Diseño
 
 <div align="center">
 
-| Aspecto | 🧬 Modelo v1: Clásico | 🛡️ Modelo v2: Robusto |
+| Aspecto |  Modelo v1: Clásico |  Modelo v2: Robusto |
 |---------|----------------------|----------------------|
 | **Objetivo** | Maximizar **Accuracy** | Maximizar **Recall** en clases críticas |
 | **Técnica de Balanceo** | Resampling (SMOTE/Oversampling) | Cost-Sensitive Learning (`class_weights`) |
@@ -132,7 +132,7 @@ Este proyecto explora ambos enfoques y demuestra cuál es más apropiado para ap
 
 ---
 
-### 🔬 Análisis de Errores Críticos
+###  Análisis de Errores Críticos
 
 Con base en las métricas del Test Set:
 
@@ -169,13 +169,13 @@ Con base en las métricas del Test Set:
 </div>
 
 **Análisis Crítico:**
-- ✅ **Fortaleza**: Métricas globales excepcionales (98% accuracy)
-- ⚠️ **Debilidad**: Recall del 95% en Ventricular significa que **5 de cada 100 arritmias ventriculares NO se detectan**
-- 🚨 **Riesgo Clínico**: En un hospital con 1000 pacientes/día, esto implica **50 arritmias potencialmente mortales pasando desapercibidas**
+-  **Fortaleza**: Métricas globales excepcionales (98% accuracy)
+-  **Debilidad**: Recall del 95% en Ventricular significa que **5 de cada 100 arritmias ventriculares NO se detectan**
+-  **Riesgo Clínico**: En un hospital con 1000 pacientes/día, esto implica **50 arritmias potencialmente mortales pasando desapercibidas**
 
 ---
 
-#### 🛡️ Modelo v2: Enfoque Clínico Robusto (Cost-Sensitive)
+####  Modelo v2: Enfoque Clínico Robusto (Cost-Sensitive)
 
 **Métricas Globales:**
 ```
@@ -206,13 +206,13 @@ F1-Score Macro Avg: 0.90  (≈ similar a v1)
 </div>
 
 **Análisis Crítico:**
-- ✅ **Fortaleza**: Recall del 98% en Ventricular → **Solo 2 de cada 100 arritmias ventriculares se pierden**
-- ✅ **Seguridad**: En el mismo hospital con 1000 pacientes/día, solo **20 casos críticos** podrían pasar desapercibidos (vs. 50 del v1)
-- ⚠️ **Trade-off**: Precision más baja (89% vs 97%) → **Más falsas alarmas**, pero esto es **clínicamente preferible**
+-  **Fortaleza**: Recall del 98% en Ventricular → **Solo 2 de cada 100 arritmias ventriculares se pierden**
+-  **Seguridad**: En el mismo hospital con 1000 pacientes/día, solo **20 casos críticos** podrían pasar desapercibidos (vs. 50 del v1)
+-  **Trade-off**: Precision más baja (89% vs 97%) → **Más falsas alarmas**, pero esto es **clínicamente preferible**
 
 ---
 
-### 🔬 Análisis de Errores Críticos
+###  Análisis de Errores Críticos
 
 <div align="center">
 
@@ -236,7 +236,7 @@ F1-Score Macro Avg: 0.90  (≈ similar a v1)
 
 ---
 
-### 🏆 Conclusión Clínica
+###  Conclusión Clínica
 
 <div align="center">
 
@@ -244,7 +244,7 @@ F1-Score Macro Avg: 0.90  (≈ similar a v1)
 
 </div>
 
-#### ✅ Por qué el Modelo v2 gana:
+####  Por qué el Modelo v2 gana:
 
 1. **Principio Médico Fundamental**: *"Primum non nocere"* (Primero, no hacer daño)
    - Es **éticamente inaceptable** dejar escapar un infarto por optimizar accuracy
@@ -269,7 +269,7 @@ F1-Score Macro Avg: 0.90  (≈ similar a v1)
 - **Modelo v2**: De 1,286 arritmias ventriculares reales, **falla en 26** → 26 muertes potenciales
 - **Resultado**: El modelo v2 salva **38 vidas adicionales** por cada 1,286 pacientes con arritmia ventricular
 
-#### ⚖️ Trade-off Aceptable:
+####  Trade-off Aceptable:
 
 - **Precio**: 165 falsas alarmas adicionales (452 vs 287)
 - **Beneficio**: 38 vidas salvadas
@@ -278,14 +278,14 @@ F1-Score Macro Avg: 0.90  (≈ similar a v1)
 
 ---
 
-### 🎯 Recomendación Final
+###  Recomendación Final
 
 Para **aplicaciones clínicas reales**, utilizar el **Modelo v2 (Robusto)** porque:
 
-✅ Cumple con el estándar médico de "mejor prevenir que lamentar"  
-✅ Reduce muertes evitables en un 60% (FN de V: 64 → 26)  
-✅ El trade-off (más falsas alarmas) es manejable clínicamente  
-✅ Es el único enfoque éticamente defendible en medicina  
+ Cumple con el estándar médico de "mejor prevenir que lamentar"  
+ Reduce muertes evitables en un 60% (FN de V: 64 → 26)  
+ El trade-off (más falsas alarmas) es manejable clínicamente  
+ Es el único enfoque éticamente defendible en medicina  
 
 > **"En cardiología, una falsa alarma es un inconveniente. Un falso negativo es un certificado de defunción."**  
 > — Principio de diseño de sistemas médicos críticos
@@ -317,7 +317,7 @@ Este formato permite trabajar directamente con algoritmos de Machine Learning si
 | **0 a 186** | Vector de características del latido | 187 valores numéricos normalizados [0, 1] |
 | **187** | Etiqueta de clase | Valor entero {0, 1, 2, 3, 4} |
 
-### 🫀 Correspondencia de Etiquetas
+###  Correspondencia de Etiquetas
 
 | Etiqueta | Tipo de Latido | Descripción Clínica | Prevalencia |
 |----------|----------------|---------------------|-------------|
@@ -336,7 +336,7 @@ El **desbalanceo extremo** (85.7% vs. 0.9%) es el motivo de esta comparativa:
 
 ---
 
-## 🏥 Fundamentos Médicos del ECG
+##  Fundamentos Médicos del ECG
 
 ### Anatomía del Electrocardiograma
 
@@ -350,7 +350,7 @@ El electrocardiograma (ECG) es el registro gráfico de la actividad eléctrica d
 
 </div>
 
-#### 2️⃣ **Complejo QRS** - Despolarización Ventricular
+#### 2️ **Complejo QRS** - Despolarización Ventricular
 
 El **complejo QRS** es la característica más crítica para la detección de arritmias:
 
@@ -361,15 +361,15 @@ El **complejo QRS** es la característica más crítica para la detección de ar
 
 **Importancia del QRS en la detección de arritmias:**
 
-🔬 **QRS estrecho (< 120 ms)**  
+ **QRS estrecho (< 120 ms)**  
 → Característico de latidos **normales** y **supraventriculares**
 
-🔬 **QRS ancho (> 120 ms)**  
+ **QRS ancho (> 120 ms)**  
 → Típico de **extrasístoles ventriculares** (arritmias potencialmente mortales)
 
 ---
 
-## 💓 Tipos de Latidos Cardíacos
+##  Tipos de Latidos Cardíacos
 
 <div align="center">
 
@@ -389,20 +389,20 @@ El **complejo QRS** es la característica más crítica para la detección de ar
 | **Fusión** | F | 🟠 Atención | 0.9% | Evaluación cardiológica |
 | **Desconocido** | Q | ⚪ Revisar | 3.5% | Repetir ECG |
 
-### 3️⃣ **Latido Ventricular (V) - EL MÁS CRÍTICO**
+### 3️ **Latido Ventricular (V) - EL MÁS CRÍTICO**
 
 **¿Por qué es la clase más importante?**
 
 Las **extrasístoles ventriculares** pueden preceder:
-- ⚠️ Taquicardia ventricular
-- 🚨 Fibrilación ventricular
-- 💀 Muerte súbita cardíaca
+-  Taquicardia ventricular
+-  Fibrilación ventricular
+-  Muerte súbita cardíaca
 
 **Por esto, el Recall en la clase V es la métrica más crítica del modelo.**
 
 ---
 
-## 🏗️ Arquitectura del Modelo
+##  Arquitectura del Modelo
 
 <div align="center">
 
@@ -444,7 +444,7 @@ Output: [P(N), P(S), P(V), P(F), P(Q)]
 
 ---
 
-## 🔍 Interpretabilidad con SHAP
+##  Interpretabilidad con SHAP
 
 Ambos modelos incluyen **explicabilidad mediante SHAP** para validar que están usando criterios médicamente relevantes.
 
@@ -512,7 +512,7 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 | *Señal ECG - Supraventricular* | *Señal ECG - Supraventricular* |
 | ![SHAP Supra v1](images/supra_shap.png) | ![SHAP Supra v2](images/supra_shap_v2.png) |
 | *Mapa SHAP - Supraventricular* | *Mapa SHAP - Supraventricular* |
-| **Predicción: Normal (N)** ❌ | **Predicción: Supraventricular (S)** ✅ |
+| **Predicción: Normal (N)**  | **Predicción: Supraventricular (S)**  |
 | Confianza: 72% | Confianza: 89% |
 
 </div>
@@ -594,7 +594,7 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 
 ---
 
-## 🚀 Instalación y Uso
+##  Instalación y Uso
 
 ### Probar Online (Recomendado)
 
@@ -644,7 +644,7 @@ streamlit run app_v2.py  # Modelo Robusto
 
 ---
 
-## 📚 Referencias Científicas
+##  Referencias Científicas
 
 1. **Goldberger, A. L., et al.** (2000). *PhysioBank, PhysioToolkit, and PhysioNet.* Circulation, 101(23), e215-e220.
 
@@ -658,7 +658,7 @@ streamlit run app_v2.py  # Modelo Robusto
 
 ---
 
-## ⚠️ Descargo de Responsabilidad Médica
+##  Descargo de Responsabilidad Médica
 
 **IMPORTANTE**: Este proyecto es con fines **educativos y de investigación**.
 
@@ -674,7 +674,7 @@ Este proyecto está bajo la **Licencia MIT**. Ver [LICENSE](LICENSE) para más d
 
 ---
 
-## 👨‍💻 Autor
+##  Autor
 
 **Gonzalo Robert Maud Gallego**
 
@@ -686,11 +686,7 @@ Este proyecto está bajo la **Licencia MIT**. Ver [LICENSE](LICENSE) para más d
 
 <div align="center">
 
-**⭐ Si este proyecto te resultó útil, considera darle una estrella en GitHub ⭐**
-
 ---
-
-**Hecho con ❤️ para la comunidad de salud digital**
 
 *"En medicina, es mejor tener 10 falsas alarmas que 1 muerte por no detectar una arritmia"*
 
