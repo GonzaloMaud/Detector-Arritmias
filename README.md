@@ -436,18 +436,118 @@ Ambos modelos incluyen **explicabilidad mediante SHAP** para validar que están 
 
 </div>
 
-### Ejemplos de Predicciones
+Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos con los mismos latidos del MIT-BIH Test Set.
 
-Ambos modelos se probaron con los mismos latidos reales del MIT-BIH Test Set:
+---
 
-| Latido Real | Modelo v1 Predice | Modelo v2 Predice | Correcto |
-|-------------|-------------------|-------------------|----------|
-| Ventricular | Ventricular (98%) | Ventricular (96%) | ✅ ✅ |
-| Supraventricular | Normal (72%) ❌ | Supraventricular (89%) ✅ | Solo v2 |
-| Fusión | Fusión (91%) | Fusión (88%) | ✅ ✅ |
-| Normal | Normal (100%) | Normal (99%) | ✅ ✅ |
+### Latido Normal (N)
 
-**Observación clave**: El Modelo v2 detecta más casos de clases minoritarias (S, F) que el v1 pasaba por alto.
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Normal v1](images/normal_signal_v1.png) | ![Señal Normal v2](images/normal_signal_v2.png) |
+| *Señal ECG - Normal* | *Señal ECG - Normal* |
+| ![SHAP Normal v1](images/normal_shap_v1.png) | ![SHAP Normal v2](images/normal_shap_v2.png) |
+| *Mapa SHAP - Normal* | *Mapa SHAP - Normal* |
+| **Predicción: Normal (N)** | **Predicción: Normal (N)** |
+| Confianza: 100% | Confianza: 99% |
+
+</div>
+
+**Análisis**: Ambos modelos clasifican correctamente. El QRS estrecho y la onda P son las características clave detectadas por SHAP.
+
+---
+
+### Latido Supraventricular (S)
+
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Supra v1](images/supra_signal_v1.png) | ![Señal Supra v2](images/supra_signal_v2.png) |
+| *Señal ECG - Supraventricular* | *Señal ECG - Supraventricular* |
+| ![SHAP Supra v1](images/supra_shap_v1.png) | ![SHAP Supra v2](images/supra_shap_v2.png) |
+| *Mapa SHAP - Supraventricular* | *Mapa SHAP - Supraventricular* |
+| **Predicción: Normal (N)** ❌ | **Predicción: Supraventricular (S)** ✅ |
+| Confianza: 72% | Confianza: 89% |
+
+</div>
+
+**Análisis**: El v2 detecta correctamente la irregularidad pre-QRS. El v1 falla al clasificarlo como Normal (falso negativo crítico).
+
+---
+
+### Latido Ventricular (V)
+
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Ventricular v1](images/ventricular_signal_v1.png) | ![Señal Ventricular v2](images/ventricular_signal_v2.png) |
+| *Señal ECG - Ventricular* | *Señal ECG - Ventricular* |
+| ![SHAP Ventricular v1](images/ventricular_shap_v1.png) | ![SHAP Ventricular v2](images/ventricular_shap_v2.png) |
+| *Mapa SHAP - Ventricular* | *Mapa SHAP - Ventricular* |
+| **Predicción: Ventricular (V)** ✅ | **Predicción: Ventricular (V)** ✅ |
+| Confianza: 98% | Confianza: 96% |
+
+</div>
+
+**Análisis**: Ambos modelos identifican correctamente el QRS ancho como indicador de arritmia ventricular. SHAP concentra importancia en la región del QRS.
+
+---
+
+### Latido de Fusión (F)
+
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Fusión v1](images/fusion_signal_v1.png) | ![Señal Fusión v2](images/fusion_signal_v2.png) |
+| *Señal ECG - Fusión* | *Señal ECG - Fusión* |
+| ![SHAP Fusión v1](images/fusion_shap_v1.png) | ![SHAP Fusión v2](images/fusion_shap_v2.png) |
+| *Mapa SHAP - Fusión* | *Mapa SHAP - Fusión* |
+| **Predicción: Fusión (F)** ✅ | **Predicción: Fusión (F)** ✅ |
+| Confianza: 91% | Confianza: 88% |
+
+</div>
+
+**Análisis**: SHAP muestra importancia distribuida en varias regiones del QRS, reflejando la naturaleza híbrida del latido de fusión.
+
+---
+
+### Latido Desconocido (Q)
+
+<div align="center">
+
+| Modelo v1: Clásico | Modelo v2: Robusto |
+|:------------------:|:------------------:|
+| ![Señal Desconocido v1](images/paced_signal_v1.png) | ![Señal Desconocido v2](images/paced_signal_v2.png) |
+| *Señal ECG - Desconocido* | *Señal ECG - Desconocido* |
+| ![SHAP Desconocido v1](images/paced_shap_v1.png) | ![SHAP Desconocido v2](images/paced_shap_v2.png) |
+| *Mapa SHAP - Desconocido* | *Mapa SHAP - Desconocido* |
+| **Predicción: Desconocido (Q)** ✅ | **Predicción: Desconocido (Q)** ✅ |
+| Confianza: 99.9% | Confianza: 98.5% |
+
+</div>
+
+**Análisis**: Ambos modelos identifican correctamente morfologías atípicas. SHAP destaca regiones anómalas dispersas en la señal.
+
+---
+
+### Resumen Comparativo
+
+| Tipo de Latido | Modelo v1 | Modelo v2 | Ganador |
+|----------------|-----------|-----------|---------|
+| **Normal** | ✅ 100% | ✅ 99% | Empate |
+| **Supraventricular** | ❌ 72% (clasificó como N) | ✅ 89% | **v2** |
+| **Ventricular** | ✅ 98% | ✅ 96% | Empate |
+| **Fusión** | ✅ 91% | ✅ 88% | Empate |
+| **Desconocido** | ✅ 99.9% | ✅ 98.5% | Empate |
+
+**Conclusión visual**: El Modelo v2 demuestra mayor sensibilidad en clases minoritarias (S), mientras ambos son igualmente efectivos en clases bien definidas (N, V).
+
+---
 
 ---
 
