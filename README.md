@@ -446,9 +446,9 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 
 | Modelo v1: Clásico | Modelo v2: Robusto |
 |:------------------:|:------------------:|
-| ![Señal Normal v1](images/normal_signal_v1.png) | ![Señal Normal v2](images/normal_signal_v2.png) |
+| ![Señal Normal v1](images/normal_signal.png) | ![Señal Normal v2](images/normal_signal_v2.png) |
 | *Señal ECG - Normal* | *Señal ECG - Normal* |
-| ![SHAP Normal v1](images/normal_shap_v1.png) | ![SHAP Normal v2](images/normal_shap_v2.png) |
+| ![SHAP Normal v1](images/normal_shap.png) | ![SHAP Normal v2](images/normal_shap_v2.png) |
 | *Mapa SHAP - Normal* | *Mapa SHAP - Normal* |
 | **Predicción: Normal (N)** | **Predicción: Normal (N)** |
 | Confianza: 100% | Confianza: 99% |
@@ -465,9 +465,9 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 
 | Modelo v1: Clásico | Modelo v2: Robusto |
 |:------------------:|:------------------:|
-| ![Señal Supra v1](images/supra_signal_v1.png) | ![Señal Supra v2](images/supra_signal_v2.png) |
+| ![Señal Supra v1](images/supra_signal.png) | ![Señal Supra v2](images/supra_signal_v2.png) |
 | *Señal ECG - Supraventricular* | *Señal ECG - Supraventricular* |
-| ![SHAP Supra v1](images/supra_shap_v1.png) | ![SHAP Supra v2](images/supra_shap_v2.png) |
+| ![SHAP Supra v1](images/supra_shap.png) | ![SHAP Supra v2](images/supra_shap_v2.png) |
 | *Mapa SHAP - Supraventricular* | *Mapa SHAP - Supraventricular* |
 | **Predicción: Normal (N)** ❌ | **Predicción: Supraventricular (S)** ✅ |
 | Confianza: 72% | Confianza: 89% |
@@ -484,9 +484,9 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 
 | Modelo v1: Clásico | Modelo v2: Robusto |
 |:------------------:|:------------------:|
-| ![Señal Ventricular v1](images/ventricular_signal_v1.png) | ![Señal Ventricular v2](images/ventricular_signal_v2.png) |
+| ![Señal Ventricular v1](images/ventricular_signal.png) | ![Señal Ventricular v2](images/ventricular_signal_v2.png) |
 | *Señal ECG - Ventricular* | *Señal ECG - Ventricular* |
-| ![SHAP Ventricular v1](images/ventricular_shap_v1.png) | ![SHAP Ventricular v2](images/ventricular_shap_v2.png) |
+| ![SHAP Ventricular v1](images/ventricular_shap.png) | ![SHAP Ventricular v2](images/ventricular_shap_v2.png) |
 | *Mapa SHAP - Ventricular* | *Mapa SHAP - Ventricular* |
 | **Predicción: Ventricular (V)** ✅ | **Predicción: Ventricular (V)** ✅ |
 | Confianza: 98% | Confianza: 96% |
@@ -503,9 +503,9 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 
 | Modelo v1: Clásico | Modelo v2: Robusto |
 |:------------------:|:------------------:|
-| ![Señal Fusión v1](images/fusion_signal_v1.png) | ![Señal Fusión v2](images/fusion_signal_v2.png) |
+| ![Señal Fusión v1](images/fusion_signal.png) | ![Señal Fusión v2](images/fusion_signal_v2.png) |
 | *Señal ECG - Fusión* | *Señal ECG - Fusión* |
-| ![SHAP Fusión v1](images/fusion_shap_v1.png) | ![SHAP Fusión v2](images/fusion_shap_v2.png) |
+| ![SHAP Fusión v1](images/fusion_shap.png) | ![SHAP Fusión v2](images/fusion_shap_v2.png) |
 | *Mapa SHAP - Fusión* | *Mapa SHAP - Fusión* |
 | **Predicción: Fusión (F)** ✅ | **Predicción: Fusión (F)** ✅ |
 | Confianza: 91% | Confianza: 88% |
@@ -522,9 +522,9 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 
 | Modelo v1: Clásico | Modelo v2: Robusto |
 |:------------------:|:------------------:|
-| ![Señal Desconocido v1](images/paced_signal_v1.png) | ![Señal Desconocido v2](images/paced_signal_v2.png) |
+| ![Señal Desconocido v1](images/paced_signal.png) | ![Señal Desconocido v2](images/paced_signal_v2.png) |
 | *Señal ECG - Desconocido* | *Señal ECG - Desconocido* |
-| ![SHAP Desconocido v1](images/paced_shap_v1.png) | ![SHAP Desconocido v2](images/paced_shap_v2.png) |
+| ![SHAP Desconocido v1](images/paced_shap.png) | ![SHAP Desconocido v2](images/paced_shap_v2.png) |
 | *Mapa SHAP - Desconocido* | *Mapa SHAP - Desconocido* |
 | **Predicción: Desconocido (Q)** ✅ | **Predicción: Desconocido (Q)** ✅ |
 | Confianza: 99.9% | Confianza: 98.5% |
