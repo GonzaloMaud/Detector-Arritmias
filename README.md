@@ -119,7 +119,7 @@ F1-Score Macro Avg: 0.91
 
 <div align="center">
 
-![Matriz de Confusión v1](images/matriz modelov1.png)
+![Matriz de Confusión v1](images/matriz_modelov1.png)
 
 *Matriz de confusión del Modelo v1 - Enfoque optimizado para Accuracy*
 
@@ -156,7 +156,7 @@ F1-Score Macro Avg: 0.90  (≈ similar a v1)
 
 <div align="center">
 
-![Matriz de Confusión v2](images/matriz modelov2.png)
+![Matriz de Confusión v2](images/matriz_modelov2.png)
 
 *Matriz de confusión del Modelo v2 - Enfoque optimizado para Recall*
 
