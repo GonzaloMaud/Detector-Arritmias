@@ -474,9 +474,9 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 | Tipo de Latido | Modelo v1 | Modelo v2 | Ganador |
 |----------------|-----------|-----------|---------|
 | **Normal** | 100% | 99% | Empate |
-| **Supraventricular** | 72% (clasificó como N) | 89% | **v2** |
+| **Supraventricular** | 72%  | 89% | Empate |
 | **Ventricular** | 98% | 96% | Empate |
-| **Fusión** | 91% | 88% | Empate |
+| **Fusión** | 91% (clasificó como v)| 88% | **v2** |
 | **Desconocido** | 99.9% | 98.5% | Empate |
 
 **Conclusión visual**: El Modelo v2 demuestra mayor sensibilidad en clases minoritarias (S), mientras ambos son igualmente efectivos en clases bien definidas (N, V).
