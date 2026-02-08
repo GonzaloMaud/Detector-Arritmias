@@ -8,10 +8,10 @@
 [![Hugging Face](https://img.shields.io/badge/🤗-Hugging%20Face-yellow)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmias)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**Estudio comparativo de dos estrategias para clasificación de arritmias cardíacas mediante CNN:  
-Accuracy vs. Seguridad Clínica**
+**Estudio comparativo de dos estrategias para clasificación de arritmias cardíacas con CNN  
+basado en el MIT-BIH Arrhythmia Database.**
 
-[📊 Comparativa de Modelos](#️-comparativa-de-modelos-accuracy-vs-seguridad-clínica) • [Fundamentos Médicos](#-fundamentos-médicos-del-ecg) • [Arquitectura](#️-arquitectura-del-modelo) • [Resultados](#-análisis-visual-de-resultados)
+[📊 Comparativa](#comparativa-de-modelos-accuracy-vs-seguridad-clínica) • [Fundamentos Médicos](#fundamentos-médicos-del-ecg) • [Arquitectura](#arquitectura-del-modelo) • [Resultados](#análisis-visual-de-resultados)
 
 </div>
 
@@ -19,14 +19,14 @@ Accuracy vs. Seguridad Clínica**
 
 ## 🚀 Demos Disponibles
 
-Prueba ambas versiones del sistema y compara su comportamiento clínico:
+Prueba ambas versiones del sistema y compara su comportamiento:
 
 <div align="center">
 
-| Modelo | Enfoque | Demo en Vivo | Optimizado Para |
+| Modelo | Enfoque | Demo en Vivo | Optimizado para |
 |--------|---------|--------------|-----------------|
-| **🧬 Modelo v1: Clásico** | Resampling (SMOTE/Oversampling) | [![Demo v1](https://img.shields.io/badge/🤗-Abrir%20v1-blue?style=flat-square)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmias) | **Accuracy** (Exactitud Global) |
-| **🛡️ Modelo v2: Robusto** | Cost-Sensitive + Data Augmentation | [![Demo v2](https://img.shields.io/badge/🤗-Abrir%20v2-green?style=flat-square)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmiasv2) | **Recall** (Seguridad Clínica) |
+| **Modelo v1: Clásico** | Resampling (SMOTE/Oversampling) | [Abrir v1](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmias) | **Accuracy global** |
+| **Modelo v2: Cost-Sensitive** | `class_weight` + Data Augmentation | [Abrir v2](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmiasv2) | **Recall en clases minoritarias** |
 
 </div>
 
@@ -34,321 +34,288 @@ Prueba ambas versiones del sistema y compara su comportamiento clínico:
 
 ## 📋 Tabla de Contenidos
 
-- [Descripción General](#-descripción-general)
-- [Comparativa de Modelos](#️-comparativa-de-modelos-accuracy-vs-seguridad-clínica)
-- [Preprocesamiento de los Datos](#-preprocesamiento-de-los-datos)
-- [Fundamentos Médicos del ECG](#-fundamentos-médicos-del-ecg)
-- [Tipos de Latidos Cardíacos](#-tipos-de-latidos-cardíacos)
-- [Arquitectura del Modelo](#️-arquitectura-del-modelo)
-- [Interpretabilidad con SHAP](#-interpretabilidad-con-shap)
-- [Análisis Visual de Resultados](#-análisis-visual-de-resultados)
-- [Instalación y Uso](#-instalación-y-uso)
-- [Dataset](#-dataset)
-- [Referencias Científicas](#-referencias-científicas)
-- [Licencia](#-licencia)
+- [Descripción General](#descripción-general)
+- [Comparativa de Modelos](#comparativa-de-modelos-accuracy-vs-seguridad-clínica)
+- [Preprocesamiento de los Datos](#preprocesamiento-de-los-datos)
+- [Fundamentos Médicos del ECG](#fundamentos-médicos-del-ecg)
+- [Tipos de Latidos Cardíacos](#tipos-de-latidos-cardíacos)
+- [Arquitectura del Modelo](#arquitectura-del-modelo)
+- [Interpretabilidad con SHAP](#interpretabilidad-con-shap)
+- [Análisis Visual de Resultados](#análisis-visual-de-resultados)
+- [Instalación y Uso](#instalación-y-uso)
+- [Dataset](#dataset)
+- [Referencias Científicas](#referencias-científicas)
+- [Descargo de Responsabilidad Médica](#descargo-de-responsabilidad-médica)
+- [Licencia](#licencia)
+- [Autor](#autor)
 
 ---
 
-##  Descripción General
+## 📄 Descripción General
 
-Este proyecto implementa **dos enfoques diferentes** para la detección automática de arritmias cardíacas mediante redes neuronales convolucionales (CNN), entrenadas con el **MIT-BIH Arrhythmia Database**.
+Este proyecto implementa **dos enfoques diferentes** para la detección automática de arritmias cardíacas mediante **redes neuronales convolucionales 1D (CNN)**, entrenadas y evaluadas sobre el **MIT-BIH Arrhythmia Database**.
 
 ### El Dilema Fundamental
 
-En machine learning médico existe un **trade-off crítico** entre dos objetivos:
+En machine learning aplicado a medicina aparece un **trade-off** entre:
 
-1. **Maximizar Accuracy** → Acertar el máximo número de predicciones posibles
-2. **Maximizar Recall (Sensibilidad)** → No dejar escapar ningún caso positivo real
+1. **Maximizar accuracy** → acertar el máximo número de predicciones totales.
+2. **Maximizar recall (sensibilidad)** → minimizar falsos negativos, especialmente en clases clínicas relevantes.
 
-**En cardiología, este dilema es literalmente de vida o muerte:**
-- Un **Falso Positivo** (FP) → Falsa alarma → Pruebas adicionales innecesarias
-- Un **Falso Negativo** (FN) → Arritmia no detectada → **Muerte del paciente**
+En este contexto:
 
-Este proyecto explora ambos enfoques y demuestra cuál es más apropiado para aplicaciones clínicas reales.
+- Un **falso positivo (FP)** → falsa alarma, más pruebas, coste adicional.
+- Un **falso negativo (FN)** → arritmia real no detectada.
 
-### Características Principales
+El objetivo de este trabajo es comparar:
 
--  **Dos modelos implementados**: Enfoque clásico vs. enfoque clínico
--  **Comparativa rigurosa**: Métricas detalladas por clase y análisis de errores críticos
--  **Interpretabilidad**: Visualización SHAP de las regiones críticas de la señal
--  **Interfaz Web**: Ambos modelos desplegados en Hugging Face Spaces
--  **Fundamento médico**: Justificación clínica de la elección del mejor modelo
+- Un **modelo clásico** centrado en **accuracy global** mediante técnicas de resampling.
+- Un **modelo cost-sensitive** que penaliza más los errores en clases minoritarias (supraventriculares, de fusión, etc.), sacrificando precisión y parte del accuracy global.
 
 ---
 
-##  Comparativa de Modelos: Accuracy vs. Seguridad Clínica
+## 📊 Comparativa de Modelos: Accuracy vs. Seguridad Clínica
 
-###  Filosofías de Diseño
+### 🧠 Filosofías de Diseño
 
 <div align="center">
 
-| Aspecto |  Modelo v1: Clásico |  Modelo v2: Robusto |
-|---------|----------------------|----------------------|
-| **Objetivo** | Maximizar **Accuracy** | Maximizar **Recall** en clases críticas |
-| **Técnica de Balanceo** | Resampling (SMOTE/Oversampling) | Cost-Sensitive Learning (`class_weights`) |
-| **Data Augmentation** | Mínimo | Vectorizado y agresivo |
-| **Filosofía** | "Acertar el máximo posible" | "No dejar morir a nadie" |
-| **Prioridad** | Métricas globales altas | Detectar **TODOS** los casos graves |
-| **Riesgo Principal** | Overfitting a datos sintéticos | Más falsas alarmas (FP) |
+| Aspecto | Modelo v1: Clásico (Resampling) | Modelo v2: Cost-Sensitive |
+|---------|----------------------------------|----------------------------|
+| Objetivo principal | Maximizar **accuracy** del test | Aumentar **recall** en clases minoritarias |
+| Técnica de balanceo | Oversampling / SMOTE | `class_weight` proporcional al desbalanceo |
+| Datos | Datos balanceados sintéticamente | Datos originales desbalanceados |
+| Data augmentation | Limitado | Desplazamiento, ruido, escalado |
+| Ventaja principal | Métricas globales muy altas | Sensibilidad alta en S y F |
+| Desventaja principal | Riesgo de sobreajuste a datos sintéticos | Más falsos positivos, menor accuracy global |
 
 </div>
 
-### 📈 Resultados Cuantitativos
+---
 
-#### Modelo v1: Enfoque Clásico (Resampling)
+### 📈 Resultados Cuantitativos (Test oficial: `mitbih_test.csv`)
+
+Los resultados siguientes se corresponden con la evaluación sobre el **test oficial** (21,892 latidos).
+
+#### Modelo v1 – Enfoque Clásico (Resampling, centrado en Accuracy)
 
 <div align="center">
 
 ![Métricas Modelo v1](images/metricas_modelo_v1.png)
 
-*Resultados del examen final (Test Set) - Modelo v1*
+*Resultados del examen final (Test Set) – Modelo v1*
 
 </div>
 
-**Análisis Crítico:**
-- **Fortaleza**: Accuracy global del 89%, métricas balanceadas
-- **Debilidad**: Recall de 0.86 en Supraventricular y 0.94 en Ventricular - **algunos casos críticos no detectados**
-- **Riesgo Clínico**: Con 1,448 arritmias ventriculares en el test, aproximadamente 87 no serían detectadas (6%)
+**Métricas globales:**
+
+- **Accuracy**: **97%**
+- **Precision (macro avg)**: 0.82  
+- **Recall (macro avg)**: 0.92  
+- **F1-score (macro avg)**: 0.87  
+
+**Métricas por clase:**
+
+| Clase | Tipo | Precision | Recall | F1-score | Support |
+|-------|------|-----------|--------|----------|---------|
+| 0 | Normal (N) | 0.99 | 0.97 | 0.98 | 18,118 |
+| 1 | Supraventricular (S) | 0.66 | 0.82 | 0.73 | 556 |
+| 2 | Ventricular (V) | 0.91 | 0.95 | 0.93 | 1,448 |
+| 3 | Fusión (F) | 0.59 | 0.88 | 0.71 | 162 |
+| 4 | Desconocido (Q) | 0.97 | 0.99 | 0.98 | 1,608 |
+
+Aproximando los falsos negativos:
+
+- FN(N) ≈ 544  
+- FN(S) ≈ 100  
+- FN(V) ≈ 72  
+- FN(F) ≈ 19  
+- FN(Q) ≈ 16  
 
 ---
 
-#### Modelo v2: Enfoque Clínico Robusto (Cost-Sensitive)
+#### Modelo v2 – Enfoque Cost-Sensitive (centrado en Recall de minoritarias)
 
 <div align="center">
 
 ![Métricas Modelo v2](images/metricas_modelov2.png)
 
-*Resultados del Modelo v2 - Enfoque optimizado para Recall*
+*Resultados del examen final (Test Set) – Modelo v2*
 
 </div>
 
-**Análisis Crítico:**
-- **Fortaleza**: Recall del 0.98 en Ventricular y 0.92 en Supraventricular - **detecta más casos críticos**
-- **Mejora vs. v1**: 
-  - Recall Ventricular: +3% (0.94 → 0.98)
-  - Recall Supraventricular: +5% (0.86 → 0.92)
-  - Recall Fusión: +9% (0.82 → 0.91)
-- **Trade-off Aceptable**: Accuracy global baja 4% (89% → 94%), pero **salva más vidas**
+**Métricas globales:**
+
+- **Accuracy**: **89%**
+- **Precision (macro avg)**: 0.65  
+- **Recall (macro avg)**: 0.91  
+- **F1-score (macro avg)**: 0.71  
+- **Balanced accuracy** (aprox.): 0.91  
+
+**Métricas por clase:**
+
+| Clase | Tipo | Precision | Recall | F1-score | Support |
+|-------|------|-----------|--------|----------|---------|
+| 0 | Normal (N) | 0.99 | 0.88 | 0.93 | 18,118 |
+| 1 | Supraventricular (S) | 0.25 | 0.86 | 0.39 | 556 |
+| 2 | Ventricular (V) | 0.82 | 0.94 | 0.87 | 1,448 |
+| 3 | Fusión (F) | 0.24 | 0.90 | 0.38 | 162 |
+| 4 | Desconocido (Q) | 0.96 | 0.97 | 0.97 | 1,608 |
+
+Falsos negativos aproximados:
+
+- FN(N) ≈ 2,174  
+- FN(S) ≈ 78  
+- FN(V) ≈ 87  
+- FN(F) ≈ 16  
+- FN(Q) ≈ 48  
 
 ---
 
-###  Análisis de Errores Críticos
+### 🔍 Análisis de Errores Críticos
 
-Con base en las métricas del Test Set:
+Resumiendo para las clases no normales:
 
-<div align="center">
+| Clase | Modelo v1 – FN | Modelo v2 – FN | Comentario |
+|-------|----------------|----------------|------------|
+| Supraventricular (S) | ≈ 100 | ≈ 78 | v2 reduce FN a costa de mucha menor precisión (muchos FP) |
+| Ventricular (V) | ≈ 72 | ≈ 87 | v1 detecta algo mejor V; v2 genera más FP y ligeramente más FN |
+| Fusión (F) | ≈ 19 | ≈ 16 | v2 mejora ligeramente el recall |
+| Desconocido (Q) | ≈ 16 | ≈ 48 | v1 es más estable en esta clase |
 
-| Métrica de Seguridad | Modelo v1 | Modelo v2 | Ganador |
-|---------------------|--------------|--------------|---------|
-| **Falsos Negativos (FN) en Ventricular** | ~87 casos (6%) | **~26 casos (2%)** | **v2** (70% menos FN) |
-| **Falsos Negativos (FN) en Supraventricular** | ~62 casos (14%) | **~36 casos (8%)** | **v2** (42% menos FN) |
-| **Recall Promedio Clases Minoritarias** | 0.88 | **0.93** | **v2** (+5.7%) |
-| **Accuracy Global** | **89%** | 94% | v2 (+5%) |
-| **Recall Macro Avg** | 0.91 | **0.93** | **v2** (+2.2%) |
+**Lectura clínica razonable:**
 
-</div>
+- **Modelo v1**  
+  - Muy alto accuracy global (97%) y buen comportamiento en todas las clases.  
+  - Menos falsos positivos y algo mejor en latidos ventriculares.  
+  - Puede perder más episodios supraventriculares que el modelo v2.
 
-**Interpretación Clínica:**
+- **Modelo v2**  
+  - Diseñado para **no "relajarse" con las clases minoritarias**: fuerza al modelo a etiquetar más S y F.  
+  - Aumenta el **recall en S y F**, pero a cambio introduce muchos más falsos positivos y baja el accuracy global.  
+  - Es más "agresivo" detectando actividad potencialmente anómala, a costa de un mayor número de alarmas innecesarias.
 
-| Escenario | Modelo v1 | Modelo v2 | Consecuencia Real |
-|-----------|-----------|-----------|-------------------|
-| **Paciente con arritmia ventricular real** | 6% probabilidad de NO detectarlo | 2% probabilidad de NO detectarlo | v2 salva más vidas |
-| **Paciente con arritmia supraventricular** | 14% probabilidad de NO detectarlo | 8% probabilidad de NO detectarlo | v2 reduce riesgo a la mitad |
-| **Costo de error** | Muerte del paciente | Holter 24h adicional (~150€) | **v2 es infinitamente más seguro** |
+En un escenario real, la elección depende del contexto:
+
+- Si el objetivo es **screening masivo** donde se toleran muchas falsas alarmas, el **modelo v2** puede tener sentido al priorizar sensibilidad en S y F.
+- Si el objetivo es un sistema de apoyo más equilibrado, con menos ruido y buen rendimiento global, el **modelo v1** es más adecuado.
 
 ---
 
-**Matriz de Confusión v1:**
+### 🧾 Matrices de Confusión
+
+**Modelo v1 – Matriz de confusión:**
 
 <div align="center">
 
 ![Matriz de Confusión v1](images/matriz_modelov1.png)
 
-*Matriz de confusión del Modelo v1 - Enfoque optimizado para Accuracy*
-
 </div>
 
-**Análisis Crítico:**
--  **Fortaleza**: Métricas globales excepcionales (98% accuracy)
--  **Debilidad**: Recall del 95% en Ventricular significa que **5 de cada 100 arritmias ventriculares NO se detectan**
--  **Riesgo Clínico**: En un hospital con 1000 pacientes/día, esto implica **50 arritmias potencialmente mortales pasando desapercibidas**
-
----
-
-####  Modelo v2: Enfoque Clínico Robusto (Cost-Sensitive)
-
-**Métricas Globales:**
-```
-Accuracy Global: 94%  (↓ 4% vs. v1)
-Precision Macro Avg: 0.87  (↓ 0.05 vs. v1)
-Recall Macro Avg: 0.93  (↑ 0.04 vs. v1)
-F1-Score Macro Avg: 0.90  (≈ similar a v1)
-```
-
-**Métricas por Clase:**
-
-| Clase | Precision | Recall | F1-Score | Support | Cambio vs. v1 |
-|-------|-----------|--------|----------|---------|---------------|
-| **Normal (N)** | 0.96 | 0.98 | 0.97 | 15,010 | Recall: -1% |
-| **Supraventricular (S)** | 0.75 | **0.92** | 0.83 | 445 | Recall: **+5%** 🎯 |
-| **Ventricular (V)** | 0.89 | **0.98** | 0.93 | 1,286 | Recall: **+3%** 🎯 |
-| **Fusión (F)** | 0.82 | **0.91** | 0.86 | 160 | Recall: **+9%** 🎯 |
-| **Desconocido (Q)** | 0.83 | 0.88 | 0.85 | 609 | Recall: +4% |
-
-**Matriz de Confusión v2:**
+**Modelo v2 – Matriz de confusión:**
 
 <div align="center">
 
 ![Matriz de Confusión v2](images/matriz_modelov2.png)
 
-*Matriz de confusión del Modelo v2 - Enfoque optimizado para Recall*
-
 </div>
 
-**Análisis Crítico:**
--  **Fortaleza**: Recall del 98% en Ventricular → **Solo 2 de cada 100 arritmias ventriculares se pierden**
--  **Seguridad**: En el mismo hospital con 1000 pacientes/día, solo **20 casos críticos** podrían pasar desapercibidos (vs. 50 del v1)
--  **Trade-off**: Precision más baja (89% vs 97%) → **Más falsas alarmas**, pero esto es **clínicamente preferible**
+Estas matrices permiten ver en detalle cómo se distribuyen los errores entre clases, especialmente las confusiones frecuentes entre:
+
+- **S ↔ N**,  
+- **F ↔ N**,  
+- y **V ↔ N** en casos de QRS menos extremos.
 
 ---
 
-###  Recomendación Final
+## 🧪 Preprocesamiento de los Datos
 
-Para **aplicaciones clínicas reales**, utilizar el **Modelo v2 (Robusto)** porque:
+Los datasets utilizados **no son señales ECG crudas**, sino segmentos preprocesados siguiendo el estándar del **MIT-BIH Arrhythmia Database**.
 
- Cumple con el estándar médico de "mejor prevenir que lamentar"  
- Reduce muertes evitables en un 60% (FN de V: 64 → 26)  
- El trade-off (más falsas alarmas) es manejable clínicamente  
- Es el único enfoque éticamente defendible en medicina  
+### Proceso de Preprocesamiento
 
-> **"En cardiología, una falsa alarma es un inconveniente. Un falso negativo es un certificado de defunción."**  
-> — Principio de diseño de sistemas médicos críticos
+1. **Segmentación del ECG** en latidos individuales.  
+2. **Alineamiento temporal** de cada latido respecto al pico R del complejo QRS.  
+3. **Normalización temporal** a longitud fija de **187 muestras**.  
+4. **Normalización de amplitud** al rango [0, 1].  
+5. **Asignación de etiquetas** según la clasificación médica validada del MIT-BIH.
 
----
+### Estructura de los Datos
 
-## 📊 Preprocesamiento de los Datos
-
-Los datasets utilizados en este proyecto **no corresponden a señales ECG crudas**, sino que han sido preprocesados previamente siguiendo el formato estándar del **MIT-BIH Arrhythmia Database**.
-
-###  Proceso de Preprocesamiento
-
-El preprocesamiento aplicado a los datos originales consiste en:
-
-1. **Segmentación de la señal ECG** en latidos individuales
-2. **Alineamiento temporal** de cada latido respecto al pico R del complejo QRS
-3. **Normalización temporal** a una longitud fija de 187 muestras
-4. **Normalización de amplitud** al rango [0, 1]
-5. **Asignación de etiquetas** según la clasificación médica validada
-
-Este formato permite trabajar directamente con algoritmos de Machine Learning sin necesidad de aplicar técnicas complejas de procesamiento de señales sobre registros continuos de ECG.
-
-### 📐 Estructura de los Datos
-
-**Cada fila del dataset representa un único latido cardíaco**, con la siguiente estructura:
+Cada fila del dataset representa un **único latido**:
 
 | Columnas | Descripción | Valores |
 |----------|-------------|---------|
-| **0 a 186** | Vector de características del latido | 187 valores numéricos normalizados [0, 1] |
-| **187** | Etiqueta de clase | Valor entero {0, 1, 2, 3, 4} |
+| 0–186 | Muestras del latido (ECG 1D) | 187 valores normalizados en [0, 1] |
+| 187 | Etiqueta de clase | {0, 1, 2, 3, 4} |
 
-###  Correspondencia de Etiquetas
+### Correspondencia de Etiquetas
 
-| Etiqueta | Tipo de Latido | Descripción Clínica | Prevalencia |
-|----------|----------------|---------------------|-------------|
-| **0** | Normal (N) | Latido sinusal normal | 85.7% |
-| **1** | Supraventricular (S) | Extrasístole supraventricular | 2.5% |
-| **2** | Ventricular (V) | Extrasístole ventricular | 7.3% |
-| **3** | Fusión (F) | Latido de fusión | 0.9% |
-| **4** | Desconocido (Q) | Latido no clasificable | 3.5% |
+| Etiqueta | Tipo de Latido | Descripción | Prevalencia (dataset completo) |
+|----------|----------------|-------------|--------------------------------|
+| 0 | Normal (N) | Latido sinusal normal | ~85.7% |
+| 1 | Supraventricular (S) | Extrasístole supraventricular | ~2.5% |
+| 2 | Ventricular (V) | Extrasístole ventricular | ~7.3% |
+| 3 | Fusión (F) | Latido de fusión | ~0.9% |
+| 4 | Desconocido (Q) | Latido no clasificable / marcapasos | ~3.5% |
 
-### ⚖️ Desbalanceo de Clases: El Problema Central
+Este **desbalanceo extremo** es el motivo de la comparación entre:
 
-El **desbalanceo extremo** (85.7% vs. 0.9%) es el motivo de esta comparativa:
-
-- **Modelo v1**: Genera datos sintéticos (SMOTE) para equilibrar → Riesgo de overfitting
-- **Modelo v2**: No toca los datos, usa pesos de clase → Refleja la realidad clínica
+- **Resampling (v1)** vs  
+- **Cost-Sensitive Learning (v2)**.
 
 ---
 
-##  Fundamentos Médicos del ECG
+## 🩺 Fundamentos Médicos del ECG
 
-### Anatomía del Electrocardiograma
+El electrocardiograma (ECG) registra la actividad eléctrica del corazón. En un ciclo normal aparecen:
 
-El electrocardiograma (ECG) es el registro gráfico de la actividad eléctrica del corazón a lo largo del tiempo. Cada ciclo cardíaco normal presenta tres componentes principales que reflejan eventos electrofisiológicos específicos:
+- **Onda P** → despolarización auricular.  
+- **Complejo QRS** → despolarización ventricular.  
+- **Onda T** → repolarización ventricular.  
 
 <div align="center">
 
 ![Complejo QRS](images/qrs_complex_diagram.png)
 
-*Anatomía del electrocardiograma mostrando las ondas P, complejo QRS y onda T*
-
 </div>
 
-#### 2️ **Complejo QRS** - Despolarización Ventricular
+El **complejo QRS** es crítico para la detección de muchas arritmias:
 
-El **complejo QRS** es la característica más crítica para la detección de arritmias:
-
-| Parámetro | Valor Normal | Significado Clínico |
-|-----------|--------------|---------------------|
-| **Duración** | **80-120 ms** | Tiempos > 120 ms sugieren bloqueos de conducción o origen ventricular |
-| **Morfología** | Estrecho y puntiagudo | QRS ancho y bizarro indica conducción anormal |
-
-**Importancia del QRS en la detección de arritmias:**
-
- **QRS estrecho (< 120 ms)**  
-→ Característico de latidos **normales** y **supraventriculares**
-
- **QRS ancho (> 120 ms)**  
-→ Típico de **extrasístoles ventriculares** (arritmias potencialmente mortales)
+| Parámetro | Rango normal | Interpretación |
+|-----------|--------------|----------------|
+| Duración del QRS | 80–120 ms | QRS ancho suele indicar origen ventricular o bloqueo de conducción |
+| Morfología | Estrecho y puntiagudo | Morfologías anchas/bizarras → posible foco ventricular |
 
 ---
 
-##  Tipos de Latidos Cardíacos
+## ❤️ Tipos de Latidos Cardíacos
 
 <div align="center">
 
 ![Comparación de Latidos ECG](images/ecg_beats_comparison.png)
 
-*Comparación de las características electrocardiográficas de los 5 tipos de latidos*
-
 </div>
 
-### Clasificación por Gravedad Clínica
-
-| Tipo | Símbolo | Gravedad | Frecuencia | Acción Médica |
-|------|---------|----------|------------|---------------|
-| **Normal** | N | 🟢 Benigno | 85.7% | Ninguna |
-| **Supraventricular** | S | 🟡 Monitorizar | 2.5% | Holter 24h si frecuente |
-| **Ventricular** | V | 🔴 **Urgente** | 7.3% | ECG urgente, posible hospitalización |
-| **Fusión** | F | 🟠 Atención | 0.9% | Evaluación cardiológica |
-| **Desconocido** | Q | ⚪ Revisar | 3.5% | Repetir ECG |
-
-### 3️ **Latido Ventricular (V) - EL MÁS CRÍTICO**
-
-**¿Por qué es la clase más importante?**
-
-Las **extrasístoles ventriculares** pueden preceder:
--  Taquicardia ventricular
--  Fibrilación ventricular
--  Muerte súbita cardíaca
-
-**Por esto, el Recall en la clase V es la métrica más crítica del modelo.**
+| Tipo | Símbolo | Gravedad clínica aproximada | Acción médica típica |
+|------|---------|-----------------------------|----------------------|
+| Normal | N | Benigno | Sin intervención |
+| Supraventricular | S | Monitorizar, valorar contexto | Holter si episodios frecuentes |
+| Ventricular | V | Potencialmente grave | ECG urgente, posible hospitalización |
+| Fusión | F | Atípico, requiere revisión | Valoración cardiológica |
+| Desconocido | Q | Morfología no estándar | Revisar registro y contexto clínico |
 
 ---
 
-##  Arquitectura del Modelo
+## 🧱 Arquitectura del Modelo
 
 <div align="center">
 
 ![Arquitectura del Modelo](images/model_architecture.png)
 
-*Arquitectura CNN 1D utilizada en ambos modelos (v1 y v2)*
-
 </div>
 
-### Red Neuronal Convolucional (CNN 1D)
-
-**Arquitectura común a ambos modelos:**
+Se implementa una **CNN 1D** común a ambos modelos:
 ```
 Input: ECG (187 puntos × 1 canal)
          ↓
@@ -374,32 +341,22 @@ Output: [P(N), P(S), P(V), P(F), P(Q)]
 | **Función de Pérdida** | `categorical_crossentropy` | `categorical_crossentropy` con `class_weight` |
 | **Data Augmentation** | Mínimo | Desplazamientos + ruido + escalado |
 | **Épocas** | 50 | 75 |
-| **Early Stopping** | Monitoring: `val_loss` | Monitoring: `val_recall_V` (Recall en V) |
+| **Early Stopping** | Monitoring: `val_loss` | Monitoring: `val_recall_V` |
 
 ---
 
-##  Interpretabilidad con SHAP
+## 🔍 Interpretabilidad con SHAP
 
-Ambos modelos incluyen **explicabilidad mediante SHAP** para validar que están usando criterios médicamente relevantes.
+**SHAP (SHapley Additive exPlanations)** permite explicar qué regiones de la señal ECG son más importantes para cada predicción del modelo.
 
-<div align="center">
-
-**Mapa de Colores SHAP**
+En cada gráfico SHAP:
 
 | Color | Significado |
 |-------|-------------|
-| 🔵 **Azul intenso** | Esta región empuja la predicción hacia la clase predicha |
-| 🔴 **Rojo intenso** | Esta región va en contra de la clase predicha |
+| **Azul** | Contribución positiva a la predicción |
+| **Rojo** | Contribución negativa a la predicción |
 
-</div>
-
-### Ejemplo: Latido Ventricular
-
-**Modelo v1 y v2 (ambos correctos):**
-- 🔵🔵🔵 Azul intenso en el **QRS ancho** (> 120 ms)
-- 🔴 Rojo en segmentos planos (ausencia de onda P)
-
-**Validación médica**: Ambos modelos aprenden correctamente que el QRS ensanchado es la característica clave de un latido ventricular.
+Ambos modelos aprenden correctamente que el **QRS ancho** es la característica clave para detectar latidos ventriculares.
 
 ---
 
@@ -446,7 +403,7 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 | *Señal ECG - Supraventricular* | *Señal ECG - Supraventricular* |
 | ![SHAP Supra v1](images/supra_shap.png) | ![SHAP Supra v2](images/supra_shap_v2.png) |
 | *Mapa SHAP - Supraventricular* | *Mapa SHAP - Supraventricular* |
-| **Predicción: Normal (N)**  | **Predicción: Supraventricular (S)**  |
+| **Predicción: Normal (N)** | **Predicción: Supraventricular (S)** |
 | Confianza: 72% | Confianza: 89% |
 
 </div>
@@ -465,7 +422,7 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 | *Señal ECG - Ventricular* | *Señal ECG - Ventricular* |
 | ![SHAP Ventricular v1](images/ventricular_shap.png) | ![SHAP Ventricular v2](images/ventricular_shap_v2.png) |
 | *Mapa SHAP - Ventricular* | *Mapa SHAP - Ventricular* |
-| **Predicción: Ventricular (V)** ✅ | **Predicción: Ventricular (V)** ✅ |
+| **Predicción: Ventricular (V)** | **Predicción: Ventricular (V)** |
 | Confianza: 98% | Confianza: 96% |
 
 </div>
@@ -484,7 +441,7 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 | *Señal ECG - Fusión* | *Señal ECG - Fusión* |
 | ![SHAP Fusión v1](images/fusion_shap.png) | ![SHAP Fusión v2](images/fusion_shap_v2.png) |
 | *Mapa SHAP - Fusión* | *Mapa SHAP - Fusión* |
-| **Predicción: Fusión (F)** ✅ | **Predicción: Fusión (F)** ✅ |
+| **Predicción: Fusión (F)** | **Predicción: Fusión (F)** |
 | Confianza: 91% | Confianza: 88% |
 
 </div>
@@ -503,7 +460,7 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 | *Señal ECG - Desconocido* | *Señal ECG - Desconocido* |
 | ![SHAP Desconocido v1](images/paced_shap.png) | ![SHAP Desconocido v2](images/paced_shap_v2.png) |
 | *Mapa SHAP - Desconocido* | *Mapa SHAP - Desconocido* |
-| **Predicción: Desconocido (Q)** ✅ | **Predicción: Desconocido (Q)** ✅ |
+| **Predicción: Desconocido (Q)** | **Predicción: Desconocido (Q)** |
 | Confianza: 99.9% | Confianza: 98.5% |
 
 </div>
@@ -516,19 +473,17 @@ Las siguientes capturas corresponden a **ejecuciones reales** de ambos modelos c
 
 | Tipo de Latido | Modelo v1 | Modelo v2 | Ganador |
 |----------------|-----------|-----------|---------|
-| **Normal** | ✅ 100% | ✅ 99% | Empate |
-| **Supraventricular** | ❌ 72% (clasificó como N) | ✅ 89% | **v2** |
-| **Ventricular** | ✅ 98% | ✅ 96% | Empate |
-| **Fusión** | ✅ 91% | ✅ 88% | Empate |
-| **Desconocido** | ✅ 99.9% | ✅ 98.5% | Empate |
+| **Normal** | 100% | 99% | Empate |
+| **Supraventricular** | 72% (clasificó como N) | 89% | **v2** |
+| **Ventricular** | 98% | 96% | Empate |
+| **Fusión** | 91% | 88% | Empate |
+| **Desconocido** | 99.9% | 98.5% | Empate |
 
 **Conclusión visual**: El Modelo v2 demuestra mayor sensibilidad en clases minoritarias (S), mientras ambos son igualmente efectivos en clases bien definidas (N, V).
 
 ---
 
----
-
-##  Instalación y Uso
+## 🚀 Instalación y Uso
 
 ### Probar Online (Recomendado)
 
@@ -578,7 +533,7 @@ streamlit run app_v2.py  # Modelo Robusto
 
 ---
 
-##  Referencias Científicas
+## 📚 Referencias Científicas
 
 1. **Goldberger, A. L., et al.** (2000). *PhysioBank, PhysioToolkit, and PhysioNet.* Circulation, 101(23), e215-e220.
 
@@ -592,13 +547,13 @@ streamlit run app_v2.py  # Modelo Robusto
 
 ---
 
-##  Descargo de Responsabilidad Médica
+## ⚠️ Descargo de Responsabilidad Médica
 
 **IMPORTANTE**: Este proyecto es con fines **educativos y de investigación**.
 
-❌ **NO está destinado para uso clínico real**  
-❌ **NO debe usarse para diagnóstico médico**  
-❌ **NO reemplaza el criterio de profesionales de la salud**
+- **NO está destinado para uso clínico real**
+- **NO debe usarse para diagnóstico médico**
+- **NO reemplaza el criterio de profesionales de la salud**
 
 ---
 
@@ -608,21 +563,24 @@ Este proyecto está bajo la **Licencia MIT**. Ver [LICENSE](LICENSE) para más d
 
 ---
 
-##  Autor
+## 👨‍💻 Autor
 
 **Gonzalo Robert Maud Gallego**
 
-- 🌐 Hugging Face: [@GonzaloMaud](https://huggingface.co/GonzaloMaud)
-- 💼 LinkedIn: Gonzalo Robert Maud Gallego
-- 🐱 GitHub: [@GonzaloMaud](https://github.com/GonzaloMaud)
+- Hugging Face: [@GonzaloMaud](https://huggingface.co/GonzaloMaud)
+- LinkedIn: Gonzalo Robert Maud Gallego
+- GitHub: [@GonzaloMaud](https://github.com/GonzaloMaud)
 
 ---
 
 <div align="center">
 
----
-
 *"En medicina, es mejor tener 10 falsas alarmas que 1 muerte por no detectar una arritmia"*
+
+[![Modelo v1](https://img.shields.io/badge/🤗-Demo%20v1%20Clásico-blue?style=for-the-badge)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmias)
+[![Modelo v2](https://img.shields.io/badge/🤗-Demo%20v2%20Robusto-green?style=for-the-badge)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmiasv2)
+
+</div>
 
 [![Modelo v1](https://img.shields.io/badge/🤗-Demo%20v1%20Clásico-blue?style=for-the-badge)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmias)
 [![Modelo v2](https://img.shields.io/badge/🤗-Demo%20v2%20Robusto-green?style=for-the-badge)](https://huggingface.co/spaces/GonzaloMaud/Detector-Arritmiasv2)
